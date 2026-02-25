@@ -150,6 +150,8 @@ def _build_success_row(
     direct_grade: GradeResult,
     mcq_with_refusal_grade: GradeResult,
     mcq_without_refusal_grade: GradeResult,
+    mapped_with_refusal_answer: str,
+    mapped_without_refusal_answer: str,
 ) -> dict[str, object]:
     return {
         "timestamp_utc": timestamp_utc,
@@ -174,14 +176,14 @@ def _build_success_row(
         "direct_reasoning": direct_grade.reasoning,
         "mcq_with_refusal_correct": mcq_with_refusal_grade.correct,
         "mcq_with_refusal_reasoning": mcq_with_refusal_grade.reasoning,
-        "mcq_with_refusal_mapped_answer": evaluation.mapped_with_refusal,
+        "mcq_with_refusal_mapped_answer": mapped_with_refusal_answer,
         "mcq_with_refusal_options": json.dumps(
             evaluation.options_with_refusal_by_question_id.get(row.question_id, []),
             ensure_ascii=False,
         ),
         "mcq_without_refusal_correct": mcq_without_refusal_grade.correct,
         "mcq_without_refusal_reasoning": mcq_without_refusal_grade.reasoning,
-        "mcq_without_refusal_mapped_answer": evaluation.mapped_without_refusal,
+        "mcq_without_refusal_mapped_answer": mapped_without_refusal_answer,
         "mcq_without_refusal_options": json.dumps(
             evaluation.options_without_refusal_by_question_id.get(row.question_id, []),
             ensure_ascii=False,
@@ -213,6 +215,19 @@ def _parse_numbered_answers(text: str) -> dict[int, str]:
         idx = int(match.group(1))
         output[idx] = (match.group(2) or "").strip()
     return output
+
+
+def _map_numbered_answers_by_question_id(
+    text: str,
+    rows: list[BenchmarkRow],
+) -> dict[str, str]:
+    numbered = _parse_numbered_answers(text)
+    mapped: dict[str, str] = {}
+    for idx, row in enumerate(rows, start=1):
+        mapped[row.question_id] = numbered.get(idx, "")
+    if len(rows) == 1 and not mapped[rows[0].question_id] and text.strip():
+        mapped[rows[0].question_id] = text.strip()
+    return mapped
 
 
 def _normalize_cell_text(text: str, limit: int = 140) -> str:
@@ -474,6 +489,14 @@ def run_benchmark(
                         mapped_without_refusal_items = _parse_numbered_answers(
                             evaluation.mapped_without_refusal
                         )
+                        mapped_with_refusal_by_qid = _map_numbered_answers_by_question_id(
+                            evaluation.mapped_with_refusal,
+                            batch.rows,
+                        )
+                        mapped_without_refusal_by_qid = _map_numbered_answers_by_question_id(
+                            evaluation.mapped_without_refusal,
+                            batch.rows,
+                        )
                         if (
                             not direct_items
                             and len(batch.rows) == 1
@@ -550,6 +573,12 @@ def run_benchmark(
                                     direct_grade=direct_grade,
                                     mcq_with_refusal_grade=mcq_with_refusal_grade,
                                     mcq_without_refusal_grade=mcq_without_refusal_grade,
+                                    mapped_with_refusal_answer=mapped_with_refusal_by_qid.get(
+                                        row.question_id, ""
+                                    ),
+                                    mapped_without_refusal_answer=mapped_without_refusal_by_qid.get(
+                                        row.question_id, ""
+                                    ),
                                 )
                             )
 

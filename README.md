@@ -22,6 +22,9 @@ repeats: 1
 dataset_setup: true
 ```
 
+Configured env vars are validated at startup and the run exits immediately if any are missing
+(for example `BIOS_API_KEY`, `HF_TOKEN`, and `OPENAI_API_KEY` when judge is enabled).
+
 ### What this does (for `benchmark: phylobio/BixBench-Verified-50`)
 
 - Uses BixBench strategy (load + prepare + grouped prompt generation).

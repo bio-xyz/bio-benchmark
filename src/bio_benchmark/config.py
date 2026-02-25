@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -159,6 +160,35 @@ def _get_preset(benchmark: str) -> dict[str, str]:
         if preset_key.lower() == key.lower():
             return preset
     return {}
+
+
+def _env_is_set(name: str | None) -> bool:
+    if not name:
+        return False
+    value = os.getenv(name)
+    return bool(value and value.strip())
+
+
+def validate_required_env_vars(config: BenchmarkConfig) -> None:
+    missing: list[str] = []
+
+    if not config.agent.api_key:
+        if not config.agent.api_key_env or not _env_is_set(config.agent.api_key_env):
+            missing.append(config.agent.api_key_env or "agent.api_key_env")
+
+    if config.dataset.hf_token_env and not _env_is_set(config.dataset.hf_token_env):
+        missing.append(config.dataset.hf_token_env)
+
+    if config.judge.enabled and not config.judge.api_key:
+        if not config.judge.api_key_env or not _env_is_set(config.judge.api_key_env):
+            missing.append(config.judge.api_key_env or "judge.api_key_env")
+
+    if missing:
+        unique_missing = sorted(set(missing))
+        raise ValueError(
+            "Missing required environment variable(s): "
+            + ", ".join(unique_missing)
+        )
 
 
 def load_config(path: str | Path) -> BenchmarkConfig:

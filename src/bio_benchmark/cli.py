@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from .config import load_config
+from .config import load_config, validate_required_env_vars
 from .runner import run_benchmark
 
 
@@ -58,7 +58,12 @@ def main() -> None:
     console = Console()
 
     if args.command == "run":
-        config = load_config(args.config)
+        try:
+            config = load_config(args.config)
+            validate_required_env_vars(config)
+        except Exception as exc:
+            console.print(f"[red]Configuration error:[/red] {exc}")
+            raise SystemExit(2) from exc
         dataset_setup_enabled = (
             config.dataset_setup if args.dataset_setup is None else args.dataset_setup
         )
