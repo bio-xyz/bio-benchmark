@@ -1,6 +1,12 @@
-## bio-benchmark
+# bio-benchmark
 
-Minimal benchmark runner.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![BixBench-Verified-50](https://img.shields.io/badge/benchmark-BixBench--Verified--50-green.svg)](https://huggingface.co/datasets/phylobio/BixBench-Verified-50)
+[![BioAgents](https://img.shields.io/badge/backend-BioAgents-purple.svg)](https://github.com/bio-xyz/BioAgents)
+[![Get API Key](https://img.shields.io/badge/API%20Key-chat.bio.xyz-teal.svg)](https://chat.bio.xyz/)
+
+BixBench evaluation harness for [BioAgents](https://github.com/bio-xyz/BioAgents) and its closed-source literature and data-analysis agents.
 
 ### Minimal config
 
@@ -36,6 +42,7 @@ cd /Users/mihailo/bio/bio-benchmark
 uv sync
 cp .env.example .env
 # fill values in .env
+# change config in benchmark.yml if needed
 uv run bio-benchmark run --config benchmark.yml
 ```
 
