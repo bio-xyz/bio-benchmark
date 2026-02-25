@@ -30,6 +30,14 @@ class AgentTaskResult:
     raw_response: dict[str, Any]
 
 
+@dataclass
+class FileCacheWarmResult:
+    discovered_files: int
+    uploaded_files: int
+    cache_hit: bool
+    file_ids: int
+
+
 CACHE_PATH = Path("datasets/file_ids_cache.json")
 CACHE_LOCK = threading.Lock()
 
@@ -70,14 +78,6 @@ def _build_url(endpoint: str, path: str) -> str:
 def _auth_fingerprint(config: AgentConfig) -> str:
     token = _resolve_api_key(config)
     return hashlib.sha256(token.encode("utf-8")).hexdigest()[:16]
-
-
-def _file_details_path(config: AgentConfig) -> str:
-    upload_path = config.upload_path.rstrip("/")
-    if upload_path.endswith("/upload"):
-        base = upload_path[: -len("/upload")]
-        return f"{base}/{{file_id}}"
-    return "/files/{file_id}"
 
 
 def _collect_upload_files(local_data_dirs: list[str]) -> list[Path]:
@@ -137,6 +137,8 @@ def _fingerprint_files(files_to_upload: list[Path]) -> tuple[str, list[dict[str,
                 "mtime_ns": stat.st_mtime_ns,
             }
         )
+    # Keep cache keys stable regardless of local_data_dirs ordering.
+    records.sort(key=lambda item: (item["path"], item["size"], item["mtime_ns"]))
     digest = hashlib.sha256(
         json.dumps(records, sort_keys=True, ensure_ascii=False).encode("utf-8")
     ).hexdigest()
@@ -163,6 +165,47 @@ def _get_cached_file_ids(cache_key: str) -> list[str] | None:
         return [str(item) for item in file_ids if str(item).strip()]
 
 
+def _record_signature(record: dict[str, Any]) -> tuple[str, int, int]:
+    path = str(record.get("path", ""))
+    try:
+        size = int(record.get("size", 0))
+    except (TypeError, ValueError):
+        size = 0
+    try:
+        mtime_ns = int(record.get("mtime_ns", 0))
+    except (TypeError, ValueError):
+        mtime_ns = 0
+    return path, size, mtime_ns
+
+
+def _find_compatible_cached_file_ids(
+    *,
+    config: AgentConfig,
+    file_records: list[dict[str, Any]],
+) -> tuple[str, list[str]] | None:
+    target = sorted(_record_signature(record) for record in file_records)
+    with CACHE_LOCK:
+        payload = _cache_payload()
+        entries = payload.get("entries", {})
+        if not isinstance(entries, dict):
+            return None
+        for key, entry in entries.items():
+            if not isinstance(entry, dict):
+                continue
+            if str(entry.get("endpoint", "")) != config.endpoint:
+                continue
+            cached_ids = entry.get("file_ids")
+            cached_files = entry.get("files")
+            if not isinstance(cached_ids, list) or not isinstance(cached_files, list):
+                continue
+            candidate = sorted(_record_signature(record) for record in cached_files)
+            if candidate != target:
+                continue
+            file_ids = [str(item) for item in cached_ids if str(item).strip()]
+            return key, file_ids
+    return None
+
+
 def _set_cached_file_ids(
     *,
     cache_key: str,
@@ -181,30 +224,6 @@ def _set_cached_file_ids(
             "files": file_records,
         }
         _write_cache(payload)
-
-
-def _cached_file_ids_are_valid(
-    session: requests.Session,
-    config: AgentConfig,
-    headers: dict[str, str],
-    cached_ids: list[str],
-) -> bool:
-    if not cached_ids:
-        return False
-    details_template = _file_details_path(config)
-    for file_id in cached_ids:
-        details_url = _build_url(
-            config.endpoint,
-            details_template.format(file_id=file_id),
-        )
-        response = session.get(
-            details_url,
-            headers=headers,
-            timeout=config.timeout_seconds,
-        )
-        if response.status_code != 200:
-            return False
-    return True
 
 
 def _upload_files(
@@ -247,6 +266,95 @@ def _upload_files(
             f"[green]uploaded file[/green] name={file_path.name} file_id={file_id}",
         )
     return file_ids
+
+
+def _resolve_or_upload_file_ids(
+    session: requests.Session,
+    config: AgentConfig,
+    headers: dict[str, str],
+    files_to_upload: list[Path],
+    *,
+    event_logger: Callable[[str], None] | None = None,
+    task_label: str | None = None,
+) -> tuple[list[str], int, bool]:
+    cache_key, file_records = _cache_key(config, files_to_upload)
+    cached_ids = _get_cached_file_ids(cache_key)
+    cache_hit_source = "direct"
+    if cached_ids is None:
+        compatible = _find_compatible_cached_file_ids(
+            config=config,
+            file_records=file_records,
+        )
+        if compatible is not None:
+            legacy_key, legacy_ids = compatible
+            cached_ids = legacy_ids
+            cache_hit_source = f"compatible:{legacy_key[:8]}"
+            # Migrate to canonical key for future stable lookups.
+            _set_cached_file_ids(
+                cache_key=cache_key,
+                config=config,
+                file_ids=legacy_ids,
+                file_records=file_records,
+            )
+    cache_entry_exists = cached_ids is not None
+    cached_id_list = cached_ids or []
+
+    if (
+        cache_entry_exists
+        and len(cached_id_list) == len(files_to_upload)
+    ):
+        _emit(
+            event_logger,
+            task_label,
+            f"[cyan]file cache hit[/cyan] source={cache_hit_source} reusing={len(cached_id_list)}",
+        )
+        return cached_id_list, 0, True
+
+    if cache_entry_exists:
+        _emit(
+            event_logger,
+            task_label,
+            "[yellow]file cache invalid[/yellow] uploading fresh files",
+        )
+    else:
+        _emit(event_logger, task_label, "file cache miss uploading files")
+
+    file_ids = _upload_files(
+        session,
+        config,
+        headers,
+        files_to_upload,
+        event_logger=event_logger,
+        task_label=task_label,
+    )
+    _set_cached_file_ids(
+        cache_key=cache_key,
+        config=config,
+        file_ids=file_ids,
+        file_records=file_records,
+    )
+    _emit(
+        event_logger,
+        task_label,
+        f"[green]file cache updated[/green] entries={len(file_ids)}",
+    )
+    return file_ids, len(file_ids), False
+
+
+def _should_retry_cached_ids_with_fresh_upload(exc: Exception) -> bool:
+    if not isinstance(exc, requests.HTTPError):
+        return False
+    response = exc.response
+    if response is None:
+        return False
+    if response.status_code not in {400, 404, 422}:
+        return False
+    body = response.text.lower()
+    if "file" in body and ("id" in body or "missing" in body or "invalid" in body):
+        return True
+    if "not found" in body and "file" in body:
+        return True
+    return False
 
 
 def _start_task(
@@ -371,36 +479,44 @@ def run_data_analysis_question(
     start_time = time.perf_counter()
     headers = _build_auth_headers(config)
     files_to_upload = _collect_upload_files(local_data_dirs or [])
+    cache_key, file_records = _cache_key(config, files_to_upload)
     _emit(
         event_logger,
         task_label,
         f"files discovered={len(files_to_upload)} local_dirs={len(local_data_dirs or [])}",
     )
-    cache_key, file_records = _cache_key(config, files_to_upload)
-
     with requests.Session() as session:
-        cached_ids = _get_cached_file_ids(cache_key)
-        if (
-            cached_ids
-            and len(cached_ids) == len(files_to_upload)
-            and _cached_file_ids_are_valid(session, config, headers, cached_ids)
-        ):
-            file_ids = cached_ids
-            uploaded_files = 0
+        file_ids, uploaded_files, _ = _resolve_or_upload_file_ids(
+            session,
+            config,
+            headers,
+            files_to_upload,
+            event_logger=event_logger,
+            task_label=task_label,
+        )
+        try:
+            task_id = _start_task(
+                session,
+                config,
+                headers,
+                prompt_text,
+                file_ids,
+                event_logger=event_logger,
+                task_label=task_label,
+            )
+        except Exception as exc:
+            should_retry = (
+                uploaded_files == 0
+                and bool(file_ids)
+                and _should_retry_cached_ids_with_fresh_upload(exc)
+            )
+            if not should_retry:
+                raise
             _emit(
                 event_logger,
                 task_label,
-                f"[cyan]file cache hit[/cyan] reusing={len(file_ids)}",
+                "[yellow]cached file IDs rejected[/yellow] re-uploading and retrying once",
             )
-        else:
-            if cached_ids:
-                _emit(
-                    event_logger,
-                    task_label,
-                    "[yellow]file cache invalid[/yellow] uploading fresh files",
-                )
-            else:
-                _emit(event_logger, task_label, "file cache miss uploading files")
             file_ids = _upload_files(
                 session,
                 config,
@@ -419,17 +535,17 @@ def run_data_analysis_question(
             _emit(
                 event_logger,
                 task_label,
-                f"[green]file cache updated[/green] entries={len(file_ids)}",
+                f"[green]file cache updated[/green] entries={len(file_ids)} reason=retry_after_reject",
             )
-        task_id = _start_task(
-            session,
-            config,
-            headers,
-            prompt_text,
-            file_ids,
-            event_logger=event_logger,
-            task_label=task_label,
-        )
+            task_id = _start_task(
+                session,
+                config,
+                headers,
+                prompt_text,
+                file_ids,
+                event_logger=event_logger,
+                task_label=task_label,
+            )
         payload, poll_count = _poll_task(
             session,
             config,
@@ -451,4 +567,36 @@ def run_data_analysis_question(
         poll_count=poll_count,
         latency_ms=latency_ms,
         raw_response=payload,
+    )
+
+
+def warm_file_cache(
+    config: AgentConfig,
+    local_data_dirs: list[str] | None,
+    *,
+    task_label: str | None = None,
+    event_logger: Callable[[str], None] | None = None,
+) -> FileCacheWarmResult:
+    headers = _build_auth_headers(config)
+    files_to_upload = _collect_upload_files(local_data_dirs or [])
+    _emit(
+        event_logger,
+        task_label,
+        f"dataset setup files discovered={len(files_to_upload)} local_dirs={len(local_data_dirs or [])}",
+    )
+
+    with requests.Session() as session:
+        file_ids, uploaded_files, cache_hit = _resolve_or_upload_file_ids(
+            session,
+            config,
+            headers,
+            files_to_upload,
+            event_logger=event_logger,
+            task_label=task_label,
+        )
+    return FileCacheWarmResult(
+        discovered_files=len(files_to_upload),
+        uploaded_files=uploaded_files,
+        cache_hit=cache_hit,
+        file_ids=len(file_ids),
     )

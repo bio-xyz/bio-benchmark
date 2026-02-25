@@ -5,3 +5,5 @@ api_key_env: BIOAGENT_PUBLIC_API_KEY
 hf_token_env: HF_TOKEN
 concurrency: 2
 repeats: 1
+# setup runs by default; set false only if you want to skip it
+# dataset_setup: false

@@ -19,6 +19,7 @@ api_key_env: BIOAGENT_PUBLIC_API_KEY
 hf_token_env: HF_TOKEN
 concurrency: 2
 repeats: 1
+dataset_setup: true
 ```
 
 ### What this does (for `benchmark: phylobio/BixBench-Verified-50`)
@@ -30,6 +31,8 @@ repeats: 1
 - Runs up to `concurrency` task groups in parallel.
 - Repeats full benchmark `repeats` times.
 - Caches uploaded file IDs per capsule fingerprint in `datasets/file_ids_cache.json` and reuses them in future runs.
+- Dataset setup runs before benchmark tasks by default, priming file cache for each unique task bundle.
+- You can disable setup with `dataset_setup: false` or `--no-dataset-setup`.
 - Grades with copied BixBench judge/option-selector logic.
 - Shows interactive progress bars and per-task logs in shell.
 - Prints final correctness report for all 3 modes: direct open, MCQ with refusal, MCQ without refusal.
@@ -44,6 +47,8 @@ cp .env.example .env
 # fill values in .env
 # change config in benchmark.yml if needed
 uv run bio-benchmark run --config benchmark.yml
+# optional: disable pre-run setup
+uv run bio-benchmark run --config benchmark.yml --no-dataset-setup
 ```
 
 ### Optional advanced overrides

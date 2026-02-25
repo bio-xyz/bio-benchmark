@@ -25,6 +25,7 @@ from rich.table import Table
 
 from .agent import AgentTaskResult, run_data_analysis_question
 from .config import BenchmarkConfig
+from .dataset_setup import run_dataset_setup
 from .judge import BatchThreeModeEvaluation, GradeResult, evaluate_batch_three_modes
 from .strategies import get_strategy
 from .strategies.base import BenchmarkRow, PreparedTaskBatch
@@ -253,9 +254,13 @@ def _repeat_progress_description(
 def run_benchmark(
     config: BenchmarkConfig,
     limit: int | None = None,
+    dataset_setup: bool | None = None,
     console: Console | None = None,
 ) -> RunSummary:
     console = console or Console()
+    dataset_setup_enabled = (
+        config.dataset_setup if dataset_setup is None else dataset_setup
+    )
 
     strategy = get_strategy(config.strategy)
     console.rule(f"Benchmark Run: {config.benchmark}")
@@ -264,6 +269,9 @@ def run_benchmark(
     )
     rows = strategy.load_rows(config, limit=limit, event_logger=console.log)
     console.log(f"loaded_rows={len(rows)}")
+    if dataset_setup_enabled and rows:
+        setup_batches = strategy.prepare_batches(config, rows)
+        run_dataset_setup(config, setup_batches, console=console)
 
     output_path = Path(
         render_template_string(config.output.csv_path, {"run_id": config.run_id})

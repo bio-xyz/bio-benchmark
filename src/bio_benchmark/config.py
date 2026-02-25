@@ -96,6 +96,7 @@ class BenchmarkConfig:
     run_id: str
     concurrency: int
     repeats: int
+    dataset_setup: bool
     dataset: DatasetConfig
     prompt: PromptConfig
     agent: AgentConfig
@@ -127,6 +128,20 @@ def _as_positive_int(value: Any, *, default: int) -> int:
     except (TypeError, ValueError):
         return default
     return max(1, parsed)
+
+
+def _as_bool(value: Any, *, default: bool) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"1", "true", "yes", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "off"}:
+            return False
+    return default
 
 
 def _default_run_id(benchmark: str) -> str:
@@ -164,6 +179,7 @@ def load_config(path: str | Path) -> BenchmarkConfig:
     run_id = str(raw.get("run_id") or _default_run_id(benchmark))
     concurrency = _as_positive_int(raw.get("concurrency"), default=1)
     repeats = _as_positive_int(raw.get("repeats"), default=1)
+    dataset_setup = _as_bool(raw.get("dataset_setup"), default=True)
 
     dataset_raw = _as_dict(raw.get("dataset"), "dataset")
     hf_token_env = dataset_raw.get("hf_token_env") or raw.get("hf_token_env")
@@ -258,6 +274,7 @@ def load_config(path: str | Path) -> BenchmarkConfig:
         run_id=run_id,
         concurrency=concurrency,
         repeats=repeats,
+        dataset_setup=dataset_setup,
         dataset=dataset,
         prompt=prompt,
         agent=agent,

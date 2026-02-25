@@ -27,6 +27,20 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Optional number of dataset examples to run",
     )
+    setup_group = run_parser.add_mutually_exclusive_group()
+    setup_group.add_argument(
+        "--dataset-setup",
+        dest="dataset_setup",
+        action="store_true",
+        help="Prime dataset/file cache before benchmark tasks (default behavior)",
+    )
+    setup_group.add_argument(
+        "--no-dataset-setup",
+        dest="dataset_setup",
+        action="store_false",
+        help="Disable pre-run dataset/file cache setup",
+    )
+    run_parser.set_defaults(dataset_setup=None)
     return parser
 
 
@@ -45,7 +59,15 @@ def main() -> None:
 
     if args.command == "run":
         config = load_config(args.config)
-        summary = run_benchmark(config, limit=args.limit, console=console)
+        dataset_setup_enabled = (
+            config.dataset_setup if args.dataset_setup is None else args.dataset_setup
+        )
+        summary = run_benchmark(
+            config,
+            limit=args.limit,
+            dataset_setup=dataset_setup_enabled,
+            console=console,
+        )
 
         console.print(
             Panel.fit(
@@ -56,6 +78,7 @@ def main() -> None:
                         f"Run ID: {config.run_id}",
                         f"Concurrency: {config.concurrency}",
                         f"Repeats: {config.repeats}",
+                        f"Dataset setup: {dataset_setup_enabled}",
                         f"Target test: {config.test}",
                     ]
                 ),
@@ -111,4 +134,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
