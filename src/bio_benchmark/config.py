@@ -216,7 +216,7 @@ def load_config(path: str | Path) -> BenchmarkConfig:
         raise ValueError("Missing required endpoint. Set top-level `endpoint`.")
 
     api_key_env = agent_raw.get("api_key_env") or raw.get(
-        "api_key_env", "BIOAGENT_PUBLIC_API_KEY"
+        "api_key_env", "BIOS_API_KEY"
     )
     api_key = agent_raw.get("api_key") or raw.get("api_key")
     if not api_key and not api_key_env:

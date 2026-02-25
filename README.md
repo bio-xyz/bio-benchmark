@@ -15,7 +15,7 @@ Only these fields are required:
 ```yml
 benchmark: phylobio/BixBench-Verified-50
 endpoint: http://localhost:8000
-api_key_env: BIOAGENT_PUBLIC_API_KEY
+api_key_env: BIOS_API_KEY
 hf_token_env: HF_TOKEN
 concurrency: 2
 repeats: 1
