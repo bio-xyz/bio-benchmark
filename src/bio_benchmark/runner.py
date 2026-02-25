@@ -385,6 +385,7 @@ def run_benchmark(
                     TimeRemainingColumn(),
                     console=console,
                     transient=False,
+                    speed_estimate_period=3600,
                 ) as progress:
                     repeat_task = progress.add_task(
                         _repeat_progress_description(

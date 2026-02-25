@@ -2,5 +2,5 @@ benchmark: phylobio/BixBench-Verified-50
 endpoint: https://api.ai.bio.xyz
 api_key_env: BIOS_API_KEY
 hf_token_env: HF_TOKEN
-concurrency: 1
+concurrency: 5
 repeats: 1
