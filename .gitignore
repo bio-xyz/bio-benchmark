@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Benchmark artifacts
+datasets/
+results/
+
+# Local run config (with secrets)
+benchmark.local.yml
+.env
