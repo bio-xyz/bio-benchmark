@@ -4,9 +4,40 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![BixBench-Verified-50](https://img.shields.io/badge/benchmark-BixBench--Verified--50-green.svg)](https://huggingface.co/datasets/phylobio/BixBench-Verified-50)
 [![BioAgents](https://img.shields.io/badge/backend-BioAgents-purple.svg)](https://github.com/bio-xyz/BioAgents)
-[![Get API Key](https://img.shields.io/badge/API%20Key-chat.bio.xyz-teal.svg)](https://chat.bio.xyz/)
+[![Get API Key](https://img.shields.io/badge/API%20Key-chat.bio.xyz-teal.svg)](https://chat.bio.xyz/chat?settings=account&section=api-keys)
 
 BixBench evaluation harness for [BioAgents](https://github.com/bio-xyz/BioAgents) and its closed-source literature and data-analysis agents.
+
+### Overall highlights (from dashboard)
+
+| Mode                    | Accuracy | 95% Wilson CI | Correct / Total |
+| ----------------------- | -------: | ------------: | --------------: |
+| Direct                  |    71.3% | 67.4% - 74.9% |       392 / 550 |
+| MCQ with refusal        |    85.1% | 81.9% - 87.8% |       468 / 550 |
+| **MCQ without refusal** |    90.0% | 87.2% - 92.2% |       495 / 550 |
+
+| Headline                                                  |               Value |
+| --------------------------------------------------------- | ------------------: |
+| MCQ lift (Direct -> **MCQ without refusal**)              |             +18.7pp |
+| Refusal gap (**MCQ without refusal** -> MCQ with refusal) |              -4.9pp |
+| Best repeat (**MCQ without refusal**)                     | 96.0% (`085809-r3`) |
+| Task groups at 100%                                       |     22 / 32 (68.8%) |
+
+### Showcase: Benchmark Dashboard
+
+Interactive page from `docs/`:
+
+- Live (GitHub Pages): [bio-xyz.github.io/bio-benchmark](https://bio-xyz.github.io/bio-benchmark/)
+- Source: [`docs/index.html`](docs/index.html)
+
+[![Benchmark dashboard preview](docs/assets/performance_analysis.png)](https://bio-xyz.github.io/bio-benchmark/)
+
+Local preview:
+
+```bash
+python3 -m http.server 8080 --directory docs
+# open http://localhost:8080
+```
 
 ### Minimal config
 
@@ -76,7 +107,5 @@ python3 scripts/build_pages_data.py
 This script updates:
 
 - `docs/data/benchmark_summary.json`
-- `docs/data/results/*.csv` (only the 3 scoped CSV files)
+- `docs/data/results/*.csv`
 - `docs/assets/performance_analysis.png`
-
-GitHub Pages deploys automatically via `.github/workflows/pages.yml` on pushes to `main` that touch `docs/` or relevant source result files. In repository settings, set **Pages -> Build and deployment -> Source** to **GitHub Actions**.

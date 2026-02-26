@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PhyloBioBixBench-Verified-50 | Bio Benchmark Results</title>
+    <title>BIOS Benchmark Results</title>
     <meta
       name="description"
-      content="Interactive dashboard for PhyloBioBixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
+      content="Interactive dashboard for BixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
     />
 
     <!-- Favicon -->
@@ -14,13 +14,10 @@
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="PhyloBioBixBench-Verified-50 | Bio Benchmark"
-    />
+    <meta property="og:title" content="BIOS Benchmark Results" />
     <meta
       property="og:description"
-      content="Interactive dashboard for PhyloBioBixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
+      content="Interactive dashboard for BixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
     />
     <meta
       property="og:url"
@@ -30,13 +27,10 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
-    <meta
-      name="twitter:title"
-      content="PhyloBioBixBench-Verified-50 | Bio Benchmark"
-    />
+    <meta name="twitter:title" content="BIOS Benchmark Results" />
     <meta
       name="twitter:description"
-      content="Interactive dashboard for PhyloBioBixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
+      content="Interactive dashboard for BixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
     />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,17 +49,62 @@
       <!-- 1. Hero -->
       <header class="hero">
         <p class="eyebrow">
-          <a href="https://ai.bio.xyz/" class="eyebrow-link">ai.bio.xyz</a>
+          <a
+            href="https://ai.bio.xyz/"
+            class="eyebrow-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            >ai.bio.xyz</a
+          >
         </p>
-        <h1>PhyloBioBixBench-Verified-50</h1>
+        <h1>BixBench-Verified-50</h1>
         <div class="hero-meta">
           <span id="generated-at">Loading data...</span>
           <span id="totals-badge"></span>
         </div>
         <nav class="hero-links">
-          <a href="https://ai.bio.xyz/" class="hero-link">ai.bio.xyz</a>
-          <a href="https://github.com/bio-xyz/bio-benchmark" class="hero-link"
-            >GitHub</a
+          <a
+            href="https://ai.bio.xyz/"
+            class="hero-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span class="hero-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M3 12h18"></path>
+                <path d="M12 3c2.8 2.4 4.5 5.6 4.5 9s-1.7 6.6-4.5 9"></path>
+                <path d="M12 3c-2.8 2.4-4.5 5.6-4.5 9s1.7 6.6 4.5 9"></path>
+              </svg>
+            </span>
+            <span class="hero-link-label">ai.bio.xyz</span></a
+          >
+          <a
+            href="https://github.com/bio-xyz/bio-benchmark"
+            class="hero-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span class="hero-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path
+                  d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.36 3.36 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.36 3.36 0 0 0 9 18.13V22"
+                ></path>
+              </svg>
+            </span>
+            <span class="hero-link-label">GitHub</span></a
+          >
+          <a
+            href="https://huggingface.co/datasets/phylobio/BixBench-Verified-50"
+            class="hero-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span class="hero-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 19h16"></path>
+                <path d="M6 15.5 10.5 11l3.5 3.5L19 8"></path>
+                <path d="m16 8 3-.2-.2 3"></path>
+              </svg>
+            </span>
+            <span class="hero-link-label">Hugging Face</span></a
           >
         </nav>
       </header>
@@ -83,13 +122,19 @@
         aria-label="Headline metrics"
       ></section>
 
-      <!-- 4. Key Takeaways -->
+      <!-- 4. Scientific Reporting -->
+      <section class="insight-panel" id="reporting-section">
+        <h2>Scientific Reporting</h2>
+        <div id="reporting-content" class="reporting-grid"></div>
+      </section>
+
+      <!-- 5. Key Takeaways -->
       <section class="insight-panel" id="takeaways-section">
         <h2>Key Takeaways</h2>
         <ol id="takeaways-list" class="takeaway-list"></ol>
       </section>
 
-      <!-- 5. Source Runs + Downloads -->
+      <!-- 6. Source Runs + Downloads -->
       <section class="panel source-panel">
         <div>
           <h2>Scoped Source Runs</h2>
@@ -111,7 +156,7 @@
         </div>
       </section>
 
-      <!-- 6. Performance Image -->
+      <!-- 7. Performance Image -->
       <section class="panel">
         <h2>Existing Performance Figure</h2>
         <p class="panel-intro">
@@ -125,7 +170,7 @@
         />
       </section>
 
-      <!-- 7. Charts Grid (6 existing + 1 new task group chart) -->
+      <!-- 8. Charts Grid (6 existing + 1 new task group chart) -->
       <section class="charts">
         <article class="panel chart-panel">
           <h2>Overall Accuracy</h2>
@@ -179,7 +224,7 @@
         </article>
       </section>
 
-      <!-- 8. Strengths & Weaknesses -->
+      <!-- 9. Strengths & Weaknesses -->
       <section class="insight-panel" id="sw-section">
         <h2>Strengths &amp; Weaknesses</h2>
         <div class="sw-grid">
@@ -194,7 +239,7 @@
         </div>
       </section>
 
-      <!-- 9. All 50 Questions Table -->
+      <!-- 10. All 50 Questions Table -->
       <section class="panel">
         <h2>All 50 Questions</h2>
         <div class="table-scroll">
@@ -215,7 +260,7 @@
         </div>
       </section>
 
-      <!-- 10. All 32 Task Groups Table -->
+      <!-- 11. All 32 Task Groups Table -->
       <section class="panel">
         <h2>All 32 Task Groups</h2>
         <div class="table-scroll">
@@ -235,13 +280,13 @@
         </div>
       </section>
 
-      <!-- 11. MCQ Rescue Detail -->
+      <!-- 12. MCQ Rescue Detail -->
       <section class="panel" id="rescue-detail-section">
         <h2>MCQ Rescue Detail</h2>
         <div id="rescue-detail-content"></div>
       </section>
 
-      <!-- 12. Cross-Run Variability -->
+      <!-- 13. Cross-Run Variability -->
       <section class="panel" id="variability-section">
         <h2>Cross-Run Variability</h2>
         <p class="panel-intro">
@@ -254,12 +299,6 @@
             <tbody id="variability-table-body"></tbody>
           </table>
         </div>
-      </section>
-
-      <!-- 13. Scientific Reporting -->
-      <section class="insight-panel" id="reporting-section">
-        <h2>Scientific Reporting</h2>
-        <div id="reporting-content" class="reporting-grid"></div>
       </section>
 
       <!-- 14. Best Repeats Table (all 11) -->
