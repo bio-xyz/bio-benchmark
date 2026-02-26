@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bio Benchmark Results</title>
+    <meta
+      name="description"
+      content="Interactive visualization for three PhyloBioBixBench-Verified-50 benchmark result runs."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <main class="page">
+      <header class="hero">
+        <p class="eyebrow">GitHub Pages Report</p>
+        <h1>PhyloBioBixBench-Verified-50</h1>
+        <p class="subtitle">
+          Visual summary of the 3 source CSV runs listed in
+          <code>results/saved_output.md</code>.
+        </p>
+        <div class="hero-meta">
+          <span id="generated-at">Loading data...</span>
+          <span id="totals-badge"></span>
+        </div>
+      </header>
+
+      <section id="headline-cards" class="cards" aria-label="Headline metrics"></section>
+
+      <section class="panel source-panel">
+        <div>
+          <h2>Scoped Source Runs</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Date</th>
+                <th>Repeats</th>
+                <th>Rows</th>
+              </tr>
+            </thead>
+            <tbody id="source-table-body"></tbody>
+          </table>
+        </div>
+        <div>
+          <h2>Downloads</h2>
+          <ul id="csv-links" class="downloads"></ul>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Existing Performance Figure</h2>
+        <p class="panel-intro">
+          Included from <code>results/performance_analysis.png</code> as requested.
+        </p>
+        <img
+          src="assets/performance_analysis.png"
+          alt="Performance analysis chart for benchmark runs"
+          class="performance-image"
+        />
+      </section>
+
+      <section class="charts">
+        <article class="panel chart-panel">
+          <h2>Overall Accuracy</h2>
+          <canvas id="overall-chart"></canvas>
+        </article>
+
+        <article class="panel chart-panel">
+          <h2>Per-File Comparison</h2>
+          <canvas id="file-chart"></canvas>
+        </article>
+
+        <article class="panel chart-panel">
+          <h2>Repeat Ranking (MCQ without refusal)</h2>
+          <canvas id="repeat-chart"></canvas>
+        </article>
+
+        <article class="panel chart-panel">
+          <h2>Hardest Questions</h2>
+          <canvas id="hardest-chart"></canvas>
+        </article>
+
+        <article class="panel chart-panel">
+          <h2>Largest Refusal Gaps</h2>
+          <canvas id="gap-chart"></canvas>
+        </article>
+
+        <article class="panel chart-panel">
+          <h2>Consistency Mix</h2>
+          <canvas id="consistency-chart"></canvas>
+        </article>
+      </section>
+
+      <section class="panel">
+        <h2>Best Repeats</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Run</th>
+              <th>Direct</th>
+              <th>MCQ with refusal</th>
+              <th>MCQ without refusal</th>
+            </tr>
+          </thead>
+          <tbody id="repeat-table-body"></tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2>Rebuild Data</h2>
+        <p class="panel-intro">
+          Run <code>python3 scripts/build_pages_data.py</code> whenever source CSVs or image change.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

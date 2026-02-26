@@ -1,0 +1,1490 @@
+{
+  "generated_at_utc": "2026-02-26T15:04:01.418926+00:00",
+  "title": "PhyloBioBixBench-Verified-50 Results",
+  "totals": {
+    "rows": 550,
+    "repeats": 11,
+    "questions": 50,
+    "task_groups": 32
+  },
+  "source_files": [
+    {
+      "filename": "phylobiobixbench-verified-50-20260224-190546.csv",
+      "file_code": "190546",
+      "date": "2026-02-24",
+      "rows": 250,
+      "repeats": 5
+    },
+    {
+      "filename": "phylobiobixbench-verified-50-20260224-224841.csv",
+      "file_code": "224841",
+      "date": "2026-02-24",
+      "rows": 100,
+      "repeats": 2
+    },
+    {
+      "filename": "phylobiobixbench-verified-50-20260225-085809.csv",
+      "file_code": "085809",
+      "date": "2026-02-25",
+      "rows": 200,
+      "repeats": 4
+    }
+  ],
+  "overall": {
+    "direct": {
+      "label": "Direct",
+      "correct": 392,
+      "total": 550,
+      "pct": 71.3
+    },
+    "mcq_with_refusal": {
+      "label": "MCQ with refusal",
+      "correct": 468,
+      "total": 550,
+      "pct": 85.1
+    },
+    "mcq_without_refusal": {
+      "label": "MCQ without refusal",
+      "correct": 495,
+      "total": 550,
+      "pct": 90.0
+    }
+  },
+  "by_file": [
+    {
+      "filename": "phylobiobixbench-verified-50-20260224-190546.csv",
+      "file_code": "190546",
+      "rows": 250,
+      "repeats": 5,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 176,
+          "total": 250,
+          "pct": 70.4
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 209,
+          "total": 250,
+          "pct": 83.6
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 223,
+          "total": 250,
+          "pct": 89.2
+        }
+      },
+      "latency": {
+        "mean_ms": 908706.5,
+        "p95_ms": 1737829.1
+      }
+    },
+    {
+      "filename": "phylobiobixbench-verified-50-20260224-224841.csv",
+      "file_code": "224841",
+      "rows": 100,
+      "repeats": 2,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 76,
+          "total": 100,
+          "pct": 76.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 87,
+          "total": 100,
+          "pct": 87.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 89,
+          "total": 100,
+          "pct": 89.0
+        }
+      },
+      "latency": {
+        "mean_ms": 848748.2,
+        "p95_ms": 1555561.3
+      }
+    },
+    {
+      "filename": "phylobiobixbench-verified-50-20260225-085809.csv",
+      "file_code": "085809",
+      "rows": 200,
+      "repeats": 4,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 140,
+          "total": 200,
+          "pct": 70.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 172,
+          "total": 200,
+          "pct": 86.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 183,
+          "total": 200,
+          "pct": 91.5
+        }
+      },
+      "latency": {
+        "mean_ms": 936134.0,
+        "p95_ms": 1742421.8
+      }
+    }
+  ],
+  "by_repeat": [
+    {
+      "file_code": "085809",
+      "repeat_index": 3,
+      "repeat_label": "r3",
+      "run_id": "phylobiobixbench-verified-50-20260225-085809-r3",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 31,
+          "total": 50,
+          "pct": 62.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 45,
+          "total": 50,
+          "pct": 90.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 48,
+          "total": 50,
+          "pct": 96.0
+        }
+      },
+      "rank_mcq_without_refusal": 1
+    },
+    {
+      "file_code": "190546",
+      "repeat_index": 1,
+      "repeat_label": "r1",
+      "run_id": "phylobiobixbench-verified-50-20260224-190546-r1",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 36,
+          "total": 50,
+          "pct": 72.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 45,
+          "total": 50,
+          "pct": 90.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 47,
+          "total": 50,
+          "pct": 94.0
+        }
+      },
+      "rank_mcq_without_refusal": 2
+    },
+    {
+      "file_code": "190546",
+      "repeat_index": 2,
+      "repeat_label": "r2",
+      "run_id": "phylobiobixbench-verified-50-20260224-190546-r2",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 37,
+          "total": 50,
+          "pct": 74.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 41,
+          "total": 50,
+          "pct": 82.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 46,
+          "total": 50,
+          "pct": 92.0
+        }
+      },
+      "rank_mcq_without_refusal": 3
+    },
+    {
+      "file_code": "190546",
+      "repeat_index": 3,
+      "repeat_label": "r3",
+      "run_id": "phylobiobixbench-verified-50-20260224-190546-r3",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 37,
+          "total": 50,
+          "pct": 74.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 44,
+          "total": 50,
+          "pct": 88.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 46,
+          "total": 50,
+          "pct": 92.0
+        }
+      },
+      "rank_mcq_without_refusal": 4
+    },
+    {
+      "file_code": "085809",
+      "repeat_index": 1,
+      "repeat_label": "r1",
+      "run_id": "phylobiobixbench-verified-50-20260225-085809-r1",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 39,
+          "total": 50,
+          "pct": 78.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 44,
+          "total": 50,
+          "pct": 88.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 45,
+          "total": 50,
+          "pct": 90.0
+        }
+      },
+      "rank_mcq_without_refusal": 5
+    },
+    {
+      "file_code": "224841",
+      "repeat_index": 1,
+      "repeat_label": "r1",
+      "run_id": "phylobiobixbench-verified-50-20260224-224841-r1",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 38,
+          "total": 50,
+          "pct": 76.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 44,
+          "total": 50,
+          "pct": 88.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 45,
+          "total": 50,
+          "pct": 90.0
+        }
+      },
+      "rank_mcq_without_refusal": 6
+    },
+    {
+      "file_code": "085809",
+      "repeat_index": 2,
+      "repeat_label": "r2",
+      "run_id": "phylobiobixbench-verified-50-20260225-085809-r2",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 36,
+          "total": 50,
+          "pct": 72.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 43,
+          "total": 50,
+          "pct": 86.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 45,
+          "total": 50,
+          "pct": 90.0
+        }
+      },
+      "rank_mcq_without_refusal": 7
+    },
+    {
+      "file_code": "085809",
+      "repeat_index": 4,
+      "repeat_label": "r4",
+      "run_id": "phylobiobixbench-verified-50-20260225-085809-r4",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 34,
+          "total": 50,
+          "pct": 68.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 40,
+          "total": 50,
+          "pct": 80.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 45,
+          "total": 50,
+          "pct": 90.0
+        }
+      },
+      "rank_mcq_without_refusal": 8
+    },
+    {
+      "file_code": "224841",
+      "repeat_index": 2,
+      "repeat_label": "r2",
+      "run_id": "phylobiobixbench-verified-50-20260224-224841-r2",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 38,
+          "total": 50,
+          "pct": 76.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 43,
+          "total": 50,
+          "pct": 86.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 44,
+          "total": 50,
+          "pct": 88.0
+        }
+      },
+      "rank_mcq_without_refusal": 9
+    },
+    {
+      "file_code": "190546",
+      "repeat_index": 5,
+      "repeat_label": "r5",
+      "run_id": "phylobiobixbench-verified-50-20260224-190546-r5",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 33,
+          "total": 50,
+          "pct": 66.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 39,
+          "total": 50,
+          "pct": 78.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 43,
+          "total": 50,
+          "pct": 86.0
+        }
+      },
+      "rank_mcq_without_refusal": 10
+    },
+    {
+      "file_code": "190546",
+      "repeat_index": 4,
+      "repeat_label": "r4",
+      "run_id": "phylobiobixbench-verified-50-20260224-190546-r4",
+      "rows": 50,
+      "metrics": {
+        "direct": {
+          "label": "Direct",
+          "correct": 33,
+          "total": 50,
+          "pct": 66.0
+        },
+        "mcq_with_refusal": {
+          "label": "MCQ with refusal",
+          "correct": 40,
+          "total": 50,
+          "pct": 80.0
+        },
+        "mcq_without_refusal": {
+          "label": "MCQ without refusal",
+          "correct": 41,
+          "total": 50,
+          "pct": 82.0
+        }
+      },
+      "rank_mcq_without_refusal": 11
+    }
+  ],
+  "question_scores": [
+    {
+      "question_id": "bix-32-q2",
+      "task_group": "bix-32",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 0.0,
+      "mcq_without_refusal_pct": 0.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 11
+    },
+    {
+      "question_id": "bix-16-q1",
+      "task_group": "bix-16",
+      "n": 11,
+      "direct_pct": 9.1,
+      "mcq_with_refusal_pct": 9.1,
+      "mcq_without_refusal_pct": 9.1,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 10
+    },
+    {
+      "question_id": "bix-16-q3",
+      "task_group": "bix-16",
+      "n": 11,
+      "direct_pct": 9.1,
+      "mcq_with_refusal_pct": 9.1,
+      "mcq_without_refusal_pct": 9.1,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 10
+    },
+    {
+      "question_id": "bix-26-q5",
+      "task_group": "bix-26",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 0.0,
+      "mcq_without_refusal_pct": 45.5,
+      "refusal_gap_pp": 45.5,
+      "mcq_without_refusal_failures": 6
+    },
+    {
+      "question_id": "bix-61-q5",
+      "task_group": "bix-61",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 18.2,
+      "mcq_without_refusal_pct": 45.5,
+      "refusal_gap_pp": 27.3,
+      "mcq_without_refusal_failures": 6
+    },
+    {
+      "question_id": "bix-24-q2",
+      "task_group": "bix-24",
+      "n": 11,
+      "direct_pct": 63.6,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 63.6,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 4
+    },
+    {
+      "question_id": "bix-12-q4",
+      "task_group": "bix-12",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 81.8,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 2
+    },
+    {
+      "question_id": "bix-17-q2",
+      "task_group": "bix-17",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 81.8,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 2
+    },
+    {
+      "question_id": "bix-12-q6",
+      "task_group": "bix-12",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": 9.1,
+      "mcq_without_refusal_failures": 1
+    },
+    {
+      "question_id": "bix-20-q3",
+      "task_group": "bix-20",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": -9.1,
+      "mcq_without_refusal_failures": 1
+    },
+    {
+      "question_id": "bix-28-q3",
+      "task_group": "bix-28",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 1
+    },
+    {
+      "question_id": "bix-46-q4",
+      "task_group": "bix-46",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 1
+    },
+    {
+      "question_id": "bix-11-q1",
+      "task_group": "bix-11",
+      "n": 11,
+      "direct_pct": 54.5,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-11-q2",
+      "task_group": "bix-11",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-12-q2",
+      "task_group": "bix-12",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 9.1,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-12-q5",
+      "task_group": "bix-12",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-14-q1",
+      "task_group": "bix-14",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 9.1,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-16-q4",
+      "task_group": "bix-16",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 18.2,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-18-q1",
+      "task_group": "bix-18",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-18-q3",
+      "task_group": "bix-18",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-22-q1",
+      "task_group": "bix-22",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-22-q4",
+      "task_group": "bix-22",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-26-q3",
+      "task_group": "bix-26",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-27-q5",
+      "task_group": "bix-27",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-30-q3",
+      "task_group": "bix-30",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-31-q2",
+      "task_group": "bix-31",
+      "n": 11,
+      "direct_pct": 72.7,
+      "mcq_with_refusal_pct": 72.7,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 27.3,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-34-q2",
+      "task_group": "bix-34",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-34-q5",
+      "task_group": "bix-34",
+      "n": 11,
+      "direct_pct": 54.5,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 18.2,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-35-q1",
+      "task_group": "bix-35",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-35-q2",
+      "task_group": "bix-35",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-37-q1",
+      "task_group": "bix-37",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-37-q4",
+      "task_group": "bix-37",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-38-q1",
+      "task_group": "bix-38",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-41-q5",
+      "task_group": "bix-41",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-43-q2",
+      "task_group": "bix-43",
+      "n": 11,
+      "direct_pct": 63.6,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-43-q4",
+      "task_group": "bix-43",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-45-q1",
+      "task_group": "bix-45",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 18.2,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-47-q3",
+      "task_group": "bix-47",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-49-q4",
+      "task_group": "bix-49",
+      "n": 11,
+      "direct_pct": 36.4,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 36.4,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-51-q2",
+      "task_group": "bix-51",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-51-q8",
+      "task_group": "bix-51",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-52-q2",
+      "task_group": "bix-52",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-52-q6",
+      "task_group": "bix-52",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-52-q7",
+      "task_group": "bix-52",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-53-q2",
+      "task_group": "bix-53",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-53-q5",
+      "task_group": "bix-53",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-54-q7",
+      "task_group": "bix-54",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 36.4,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-55-q1",
+      "task_group": "bix-55",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-6-q4",
+      "task_group": "bix-6",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-61-q2",
+      "task_group": "bix-61",
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 0
+    }
+  ],
+  "task_group_scores": [
+    {
+      "task_group": "bix-32",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 0.0,
+      "mcq_without_refusal_pct": 0.0
+    },
+    {
+      "task_group": "bix-16",
+      "questions": 3,
+      "n": 33,
+      "direct_pct": 36.4,
+      "mcq_with_refusal_pct": 33.3,
+      "mcq_without_refusal_pct": 39.4
+    },
+    {
+      "task_group": "bix-24",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 63.6,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 63.6
+    },
+    {
+      "task_group": "bix-26",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 45.5,
+      "mcq_with_refusal_pct": 50.0,
+      "mcq_without_refusal_pct": 72.7
+    },
+    {
+      "task_group": "bix-61",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 50.0,
+      "mcq_with_refusal_pct": 59.1,
+      "mcq_without_refusal_pct": 72.7
+    },
+    {
+      "task_group": "bix-17",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 81.8
+    },
+    {
+      "task_group": "bix-20",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 90.9
+    },
+    {
+      "task_group": "bix-28",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 90.9
+    },
+    {
+      "task_group": "bix-46",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 90.9
+    },
+    {
+      "task_group": "bix-12",
+      "questions": 4,
+      "n": 44,
+      "direct_pct": 65.9,
+      "mcq_with_refusal_pct": 88.6,
+      "mcq_without_refusal_pct": 93.2
+    },
+    {
+      "task_group": "bix-11",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 27.3,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-14",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-18",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-22",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-27",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-30",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-31",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 72.7,
+      "mcq_with_refusal_pct": 72.7,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-34",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 68.2,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-35",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-37",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-38",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-41",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-43",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-45",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-47",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-49",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 36.4,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-51",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-52",
+      "questions": 3,
+      "n": 33,
+      "direct_pct": 97.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-53",
+      "questions": 2,
+      "n": 22,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-54",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-55",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    },
+    {
+      "task_group": "bix-6",
+      "questions": 1,
+      "n": 11,
+      "direct_pct": 100.0,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 100.0
+    }
+  ],
+  "hardest_questions": [
+    {
+      "question_id": "bix-32-q2",
+      "task_group": "bix-32",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 0.0,
+      "mcq_without_refusal_pct": 0.0,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 11
+    },
+    {
+      "question_id": "bix-16-q1",
+      "task_group": "bix-16",
+      "n": 11,
+      "direct_pct": 9.1,
+      "mcq_with_refusal_pct": 9.1,
+      "mcq_without_refusal_pct": 9.1,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 10
+    },
+    {
+      "question_id": "bix-16-q3",
+      "task_group": "bix-16",
+      "n": 11,
+      "direct_pct": 9.1,
+      "mcq_with_refusal_pct": 9.1,
+      "mcq_without_refusal_pct": 9.1,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 10
+    },
+    {
+      "question_id": "bix-26-q5",
+      "task_group": "bix-26",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 0.0,
+      "mcq_without_refusal_pct": 45.5,
+      "refusal_gap_pp": 45.5,
+      "mcq_without_refusal_failures": 6
+    },
+    {
+      "question_id": "bix-61-q5",
+      "task_group": "bix-61",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 18.2,
+      "mcq_without_refusal_pct": 45.5,
+      "refusal_gap_pp": 27.3,
+      "mcq_without_refusal_failures": 6
+    },
+    {
+      "question_id": "bix-24-q2",
+      "task_group": "bix-24",
+      "n": 11,
+      "direct_pct": 63.6,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 63.6,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 4
+    },
+    {
+      "question_id": "bix-12-q4",
+      "task_group": "bix-12",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 81.8,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 2
+    },
+    {
+      "question_id": "bix-17-q2",
+      "task_group": "bix-17",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 81.8,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 2
+    },
+    {
+      "question_id": "bix-12-q6",
+      "task_group": "bix-12",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": 9.1,
+      "mcq_without_refusal_failures": 1
+    },
+    {
+      "question_id": "bix-20-q3",
+      "task_group": "bix-20",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 100.0,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": -9.1,
+      "mcq_without_refusal_failures": 1
+    },
+    {
+      "question_id": "bix-28-q3",
+      "task_group": "bix-28",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 1
+    },
+    {
+      "question_id": "bix-46-q4",
+      "task_group": "bix-46",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": 0.0,
+      "mcq_without_refusal_failures": 1
+    }
+  ],
+  "refusal_gap_questions": [
+    {
+      "question_id": "bix-26-q5",
+      "task_group": "bix-26",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 0.0,
+      "mcq_without_refusal_pct": 45.5,
+      "refusal_gap_pp": 45.5,
+      "mcq_without_refusal_failures": 6
+    },
+    {
+      "question_id": "bix-49-q4",
+      "task_group": "bix-49",
+      "n": 11,
+      "direct_pct": 36.4,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 36.4,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-54-q7",
+      "task_group": "bix-54",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 63.6,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 36.4,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-31-q2",
+      "task_group": "bix-31",
+      "n": 11,
+      "direct_pct": 72.7,
+      "mcq_with_refusal_pct": 72.7,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 27.3,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-61-q5",
+      "task_group": "bix-61",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 18.2,
+      "mcq_without_refusal_pct": 45.5,
+      "refusal_gap_pp": 27.3,
+      "mcq_without_refusal_failures": 6
+    },
+    {
+      "question_id": "bix-16-q4",
+      "task_group": "bix-16",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 18.2,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-34-q5",
+      "task_group": "bix-34",
+      "n": 11,
+      "direct_pct": 54.5,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 18.2,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-45-q1",
+      "task_group": "bix-45",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 18.2,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-12-q2",
+      "task_group": "bix-12",
+      "n": 11,
+      "direct_pct": 0.0,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 9.1,
+      "mcq_without_refusal_failures": 0
+    },
+    {
+      "question_id": "bix-12-q6",
+      "task_group": "bix-12",
+      "n": 11,
+      "direct_pct": 81.8,
+      "mcq_with_refusal_pct": 81.8,
+      "mcq_without_refusal_pct": 90.9,
+      "refusal_gap_pp": 9.1,
+      "mcq_without_refusal_failures": 1
+    },
+    {
+      "question_id": "bix-14-q1",
+      "task_group": "bix-14",
+      "n": 11,
+      "direct_pct": 90.9,
+      "mcq_with_refusal_pct": 90.9,
+      "mcq_without_refusal_pct": 100.0,
+      "refusal_gap_pp": 9.1,
+      "mcq_without_refusal_failures": 0
+    }
+  ],
+  "rescue": {
+    "direct_wrong": 158,
+    "direct_right": 392,
+    "rescued": 103,
+    "rescued_pct": 65.2,
+    "lost": 0,
+    "lost_pct": 0.0
+  },
+  "consistency": {
+    "always_correct": 38,
+    "always_wrong": 1,
+    "mixed": 11,
+    "always_correct_pct": 76.0,
+    "always_wrong_pct": 2.0,
+    "mixed_pct": 22.0,
+    "mixed_questions": [
+      "bix-12-q4",
+      "bix-12-q6",
+      "bix-16-q1",
+      "bix-16-q3",
+      "bix-17-q2",
+      "bix-20-q3",
+      "bix-24-q2",
+      "bix-26-q5",
+      "bix-28-q3",
+      "bix-46-q4",
+      "bix-61-q5"
+    ]
+  },
+  "latency": {
+    "mean_ms": 907778.6,
+    "p95_ms": 1702785.3
+  },
+  "assets": {
+    "performance_plot": "assets/performance_analysis.png",
+    "csv_dir": "data/results"
+  },
+  "notes": {
+    "scoped_to_source_files": true,
+    "source_markdown": "results/saved_output.md"
+  }
+}

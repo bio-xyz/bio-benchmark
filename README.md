@@ -58,3 +58,25 @@ uv run bio-benchmark run --config benchmark.yml --no-dataset-setup
 
 You can still provide optional `dataset`, `prompt`, `agent`, `judge`, `retry`, and `output` sections to override defaults.
 For the filtered dataset, use `benchmark: bixbench-verified-50` or override `dataset.repo_id`.
+
+### Benchmark Results GitHub Pages
+
+This repo includes a static site in `docs/` that showcases benchmark results for exactly these 3 CSV runs listed in `results/saved_output.md`:
+
+- `phylobiobixbench-verified-50-20260224-190546.csv`
+- `phylobiobixbench-verified-50-20260224-224841.csv`
+- `phylobiobixbench-verified-50-20260225-085809.csv`
+
+To rebuild page data and synced assets:
+
+```bash
+python3 scripts/build_pages_data.py
+```
+
+This script updates:
+
+- `docs/data/benchmark_summary.json`
+- `docs/data/results/*.csv` (only the 3 scoped CSV files)
+- `docs/assets/performance_analysis.png`
+
+GitHub Pages deploys automatically via `.github/workflows/pages.yml` on pushes to `main` that touch `docs/` or relevant source result files. In repository settings, set **Pages -> Build and deployment -> Source** to **GitHub Actions**.
