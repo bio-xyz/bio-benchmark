@@ -32,9 +32,12 @@ function dateTime(value) {
   return new Date(value).toLocaleString();
 }
 
-function metricCard(title, value, detail) {
+function metricCard(title, value, detail, tooltip) {
+  const tip = tooltip
+    ? ` data-tooltip="${escapeHtml(tooltip)}" tabindex="0"`
+    : "";
   return `
-    <article class="metric-card">
+    <article class="metric-card"${tip}>
       <p class="metric-title">${title}</p>
       <p class="metric-value">${value}</p>
       <p class="metric-detail">${detail}</p>
@@ -64,11 +67,10 @@ function escapeHtml(str) {
 
 function setHeader(data) {
   document.getElementById("generated-at").textContent = `Generated ${dateTime(
-    data.generated_at_utc
+    data.generated_at_utc,
   )}`;
-  document.getElementById(
-    "totals-badge"
-  ).textContent = `${data.totals.rows} rows \u2022 ${data.totals.repeats} repeats \u2022 ${data.totals.questions} questions`;
+  document.getElementById("totals-badge").textContent =
+    `${data.totals.rows} rows \u2022 ${data.totals.repeats} repeats \u2022 ${data.totals.questions} questions`;
 }
 
 // --- Grading Modes ---
@@ -85,7 +87,7 @@ function renderGradingModes(data) {
       <h3>${escapeHtml(m.name)}</h3>
       <p>${escapeHtml(m.description)}</p>
     </div>
-  `
+  `,
     )
     .join("");
 
@@ -107,51 +109,223 @@ function renderCards(data) {
     metricCard(
       "Direct",
       pct(overall.direct.pct),
-      `${overall.direct.correct}/${overall.direct.total}`
+      `${overall.direct.correct}/${overall.direct.total}`,
+      "Accuracy when the model answers the question directly (open-ended, no answer choices provided).",
     ),
     metricCard(
       "MCQ with refusal",
       pct(overall.mcq_with_refusal.pct),
-      `${overall.mcq_with_refusal.correct}/${overall.mcq_with_refusal.total}`
+      `${overall.mcq_with_refusal.correct}/${overall.mcq_with_refusal.total}`,
+      "Accuracy on multiple-choice questions where 'I don't know' is included as an answer option.",
     ),
     metricCard(
       "MCQ without refusal",
       pct(overall.mcq_without_refusal.pct),
-      `${overall.mcq_without_refusal.correct}/${overall.mcq_without_refusal.total}`
+      `${overall.mcq_without_refusal.correct}/${overall.mcq_without_refusal.total}`,
+      "Accuracy on multiple-choice questions without an 'I don't know' option, forcing a best guess.",
     ),
     metricCard(
       "MCQ Lift",
       pp(h.mcq_lift_pp),
-      `Direct \u2192 MCQ w/o refusal`
+      `Direct \u2192 MCQ w/o refusal`,
+      "Percentage-point gain when switching from direct (open-ended) to MCQ without refusal. Shows how much answer choices help the model.",
     ),
     metricCard(
       "Refusal Gap",
       `${h.refusal_gap_pp}pp`,
-      `MCQ w/o \u2192 MCQ w/ refusal`
+      `MCQ w/o \u2192 MCQ w/ refusal`,
+      "Percentage-point drop from MCQ without refusal to MCQ with refusal. Measures how often the model opts for 'I don't know' when given the chance.",
     ),
     metricCard(
       "MCQ rescue rate",
       pct(rescue.rescued_pct),
-      `${rescue.rescued}/${rescue.direct_wrong} direct misses rescued`
+      `${rescue.rescued}/${rescue.direct_wrong} direct misses rescued`,
+      "Of questions answered wrong in direct mode, the percentage that were answered correctly in MCQ without refusal mode.",
     ),
     metricCard(
       "Best repeat",
       pct(h.best_repeat_pct),
-      h.best_repeat_label
+      h.best_repeat_label,
+      "The highest MCQ without refusal accuracy achieved by any single repeat run.",
     ),
     metricCard(
       "Always-correct questions",
       pct(consistency.always_correct_pct),
-      `${consistency.always_correct}/${data.totals.questions} questions`
+      `${consistency.always_correct}/${data.totals.questions} questions`,
+      "Questions answered correctly in MCQ without refusal mode across every single repeat run.",
     ),
     metricCard(
       "Task groups at 100%",
       pct(h.task_groups_at_100_pct),
-      `${h.task_groups_at_100}/${h.total_task_groups} task groups`
+      `${h.task_groups_at_100}/${h.total_task_groups} task groups`,
+      "Task groups where every question was answered correctly in MCQ without refusal across all runs.",
     ),
   ].join("");
 
   document.getElementById("headline-cards").innerHTML = cardsMarkup;
+}
+
+function initMetricTooltips() {
+  const cards = Array.from(
+    document.querySelectorAll(".metric-card[data-tooltip]"),
+  );
+  if (!cards.length) return;
+
+  const tip = document.createElement("div");
+  tip.id = "metric-tooltip";
+  tip.className = "tip";
+  tip.setAttribute("role", "tooltip");
+  document.body.appendChild(tip);
+
+  const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
+  const viewportPadding = 8;
+  const edgePadding = 12;
+  const gap = 12;
+  let activeCard = null;
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function positionTooltip(card) {
+    const rect = card.getBoundingClientRect();
+    const anchorX = rect.left + rect.width / 2;
+
+    tip.style.left = "0px";
+    tip.style.top = "0px";
+    const tipRect = tip.getBoundingClientRect();
+
+    const maxLeft = window.innerWidth - tipRect.width - viewportPadding;
+    const left = clamp(
+      anchorX - tipRect.width / 2,
+      viewportPadding,
+      Math.max(viewportPadding, maxLeft),
+    );
+    const anchorInside = clamp(
+      anchorX - left,
+      edgePadding,
+      tipRect.width - edgePadding,
+    );
+    tip.style.left = `${left}px`;
+    tip.style.setProperty("--tip-anchor", `${anchorInside}px`);
+
+    const spaceAbove = rect.top - viewportPadding;
+    const spaceBelow = window.innerHeight - rect.bottom - viewportPadding;
+    const placeAbove =
+      spaceAbove >= tipRect.height + gap || spaceAbove >= spaceBelow;
+
+    if (placeAbove) {
+      tip.dataset.placement = "top";
+      tip.style.top = `${Math.max(
+        viewportPadding,
+        rect.top - tipRect.height - gap,
+      )}px`;
+      return;
+    }
+
+    tip.dataset.placement = "bottom";
+    tip.style.top = `${Math.min(
+      window.innerHeight - tipRect.height - viewportPadding,
+      rect.bottom + gap,
+    )}px`;
+  }
+
+  function showTooltip(card) {
+    if (activeCard === card) {
+      positionTooltip(card);
+      return;
+    }
+    if (activeCard) {
+      activeCard.classList.remove("is-tooltip-active");
+    }
+    activeCard = card;
+    activeCard.classList.add("is-tooltip-active");
+    tip.textContent = card.dataset.tooltip;
+    tip.classList.add("visible");
+    positionTooltip(card);
+  }
+
+  function hideTooltip() {
+    if (activeCard) {
+      activeCard.classList.remove("is-tooltip-active");
+      activeCard = null;
+    }
+    tip.classList.remove("visible");
+    tip.removeAttribute("data-placement");
+  }
+
+  cards.forEach((card) => {
+    card.setAttribute("aria-describedby", "metric-tooltip");
+
+    card.addEventListener("mouseenter", () => {
+      showTooltip(card);
+    });
+
+    card.addEventListener("mousemove", () => {
+      if (activeCard === card) {
+        positionTooltip(card);
+      }
+    });
+
+    card.addEventListener("mouseleave", () => {
+      if (activeCard === card) {
+        hideTooltip();
+      }
+    });
+
+    card.addEventListener("focus", () => {
+      showTooltip(card);
+    });
+
+    card.addEventListener("blur", () => {
+      if (activeCard === card) {
+        hideTooltip();
+      }
+    });
+
+    card.addEventListener("click", (event) => {
+      if (!coarsePointerQuery.matches) return;
+      event.preventDefault();
+      if (activeCard === card) {
+        hideTooltip();
+        return;
+      }
+      showTooltip(card);
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!coarsePointerQuery.matches) return;
+    if (
+      event.target instanceof Element &&
+      event.target.closest(".metric-card[data-tooltip]")
+    ) {
+      return;
+    }
+    hideTooltip();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      hideTooltip();
+    }
+  });
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (activeCard) {
+        positionTooltip(activeCard);
+      }
+    },
+    true,
+  );
+
+  window.addEventListener("resize", () => {
+    if (activeCard) {
+      positionTooltip(activeCard);
+    }
+  });
 }
 
 // --- Key Takeaways ---
@@ -176,7 +350,7 @@ function renderSourceTable(data) {
         <td>${item.repeats}</td>
         <td>${item.rows}</td>
       </tr>
-    `
+    `,
     )
     .join("");
 
@@ -184,7 +358,7 @@ function renderSourceTable(data) {
   links.innerHTML = data.source_files
     .map(
       (item) =>
-        `<li><a href="data/results/${item.filename}" download>${item.filename}</a></li>`
+        `<li><a href="data/results/${item.filename}" download>${item.filename}</a></li>`,
     )
     .join("");
 }
@@ -192,12 +366,10 @@ function renderSourceTable(data) {
 // --- Strengths & Weaknesses ---
 
 function renderStrengthsWeaknesses(data) {
-  document.getElementById("strengths-list").innerHTML = data.commentary.strengths
-    .map((s) => `<li>${escapeHtml(s)}</li>`)
-    .join("");
-  document.getElementById("weaknesses-list").innerHTML = data.commentary.weaknesses
-    .map((w) => `<li>${escapeHtml(w)}</li>`)
-    .join("");
+  document.getElementById("strengths-list").innerHTML =
+    data.commentary.strengths.map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+  document.getElementById("weaknesses-list").innerHTML =
+    data.commentary.weaknesses.map((w) => `<li>${escapeHtml(w)}</li>`).join("");
 }
 
 // --- Sortable Table Helper ---
@@ -314,7 +486,7 @@ function renderRescueDetail(data) {
       <tbody>${lifts
         .map(
           (q) =>
-            `<tr><td><code>${q.question_id}</code></td><td>${pct(q.direct_pct)}</td><td>${pct(q.mcq_without_refusal_pct)}</td><td>${pp(q.mcq_lift_pp)}</td></tr>`
+            `<tr><td><code>${q.question_id}</code></td><td>${pct(q.direct_pct)}</td><td>${pct(q.mcq_without_refusal_pct)}</td><td>${pp(q.mcq_lift_pp)}</td></tr>`,
         )
         .join("")}</tbody>
     </table></div>`
@@ -343,7 +515,12 @@ function renderCrossRunVariability(data) {
       const cells = fileCodes
         .map((fc) => {
           const d = r.by_file[fc];
-          const cls = d.correct === 0 ? "cell-zero" : d.correct === d.total ? "cell-perfect" : "";
+          const cls =
+            d.correct === 0
+              ? "cell-zero"
+              : d.correct === d.total
+                ? "cell-perfect"
+                : "";
           return `<td class="${cls}">${d.correct}/${d.total}</td>`;
         })
         .join("");
@@ -360,7 +537,11 @@ function renderScientificReporting(data) {
   const container = document.getElementById("reporting-content");
 
   const metrics = ["direct", "mcq_with_refusal", "mcq_without_refusal"];
-  const labels = { direct: "Direct", mcq_with_refusal: "MCQ w/ refusal", mcq_without_refusal: "MCQ w/o refusal" };
+  const labels = {
+    direct: "Direct",
+    mcq_with_refusal: "MCQ w/ refusal",
+    mcq_without_refusal: "MCQ w/o refusal",
+  };
 
   const primaryItems = metrics
     .map((key) => {
@@ -416,7 +597,7 @@ function renderRepeatTable(data) {
         <td>${pct(row.metrics.mcq_with_refusal.pct)}</td>
         <td>${pct(row.metrics.mcq_without_refusal.pct)}</td>
       </tr>
-    `
+    `,
     )
     .join("");
 }
@@ -441,7 +622,11 @@ function renderCharts(data) {
             data.overall.mcq_with_refusal.pct,
             data.overall.mcq_without_refusal.pct,
           ],
-          backgroundColor: [chartPalette.coral, chartPalette.sun, chartPalette.teal],
+          backgroundColor: [
+            chartPalette.coral,
+            chartPalette.sun,
+            chartPalette.teal,
+          ],
           borderRadius: 8,
         },
       ],
@@ -500,11 +685,15 @@ function renderCharts(data) {
   newChart("repeat-chart", {
     type: "line",
     data: {
-      labels: data.by_repeat.map((row) => `${row.file_code}-${row.repeat_label}`),
+      labels: data.by_repeat.map(
+        (row) => `${row.file_code}-${row.repeat_label}`,
+      ),
       datasets: [
         {
           label: "MCQ without refusal",
-          data: data.by_repeat.map((row) => row.metrics.mcq_without_refusal.pct),
+          data: data.by_repeat.map(
+            (row) => row.metrics.mcq_without_refusal.pct,
+          ),
           borderColor: chartPalette.teal,
           pointBackgroundColor: chartPalette.teal,
           pointRadius: 4,
@@ -598,7 +787,11 @@ function renderCharts(data) {
             data.consistency.mixed,
             data.consistency.always_wrong,
           ],
-          backgroundColor: [chartPalette.mint, chartPalette.amber, chartPalette.coral],
+          backgroundColor: [
+            chartPalette.mint,
+            chartPalette.amber,
+            chartPalette.coral,
+          ],
           borderWidth: 0,
         },
       ],
@@ -611,7 +804,7 @@ function renderCharts(data) {
 
   // Task group horizontal grouped bar chart
   const tgData = [...data.task_group_scores].sort(
-    (a, b) => a.mcq_without_refusal_pct - b.mcq_without_refusal_pct
+    (a, b) => a.mcq_without_refusal_pct - b.mcq_without_refusal_pct,
   );
   newChart("taskgroup-chart", {
     type: "bar",
@@ -656,6 +849,7 @@ async function init() {
   setHeader(data);
   renderGradingModes(data);
   renderCards(data);
+  initMetricTooltips();
   renderKeyTakeaways(data);
   renderSourceTable(data);
   renderCharts(data);

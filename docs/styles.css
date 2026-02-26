@@ -131,6 +131,75 @@ code {
   border: 1px solid var(--border);
   background: var(--surface);
   box-shadow: var(--shadow-soft);
+  cursor: default;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.metric-card[data-tooltip] {
+  cursor: help;
+}
+
+.metric-card[data-tooltip]:hover,
+.metric-card[data-tooltip]:focus-visible,
+.metric-card.is-tooltip-active {
+  border-color: rgba(122, 154, 104, 0.5);
+  box-shadow:
+    0 18px 30px -24px rgba(24, 24, 27, 0.52),
+    0 0 0 3px rgba(152, 179, 132, 0.18);
+  transform: translateY(-1px);
+}
+
+.metric-card[data-tooltip]:focus-visible {
+  outline: none;
+}
+
+.tip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(155deg, rgba(39, 39, 42, 0.98), rgba(24, 24, 27, 0.98));
+  color: #fafafa;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  border-radius: 10px;
+  z-index: 1100;
+  pointer-events: none;
+  box-shadow: 0 18px 36px -24px rgba(24, 24, 27, 0.9);
+  opacity: 0;
+  transform: translateY(4px) scale(0.985);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+}
+
+.tip::after {
+  content: "";
+  position: absolute;
+  left: var(--tip-anchor, 50%);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+}
+
+.tip[data-placement="top"]::after {
+  top: 100%;
+  border-top-color: rgba(24, 24, 27, 0.98);
+}
+
+.tip[data-placement="bottom"]::after {
+  bottom: 100%;
+  border-bottom-color: rgba(39, 39, 42, 0.98);
+}
+
+.tip.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .metric-title {
@@ -550,5 +619,12 @@ td code {
 
   .hero {
     border-radius: var(--radius-lg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metric-card,
+  .tip {
+    transition: none;
   }
 }
