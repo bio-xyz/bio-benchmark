@@ -12,6 +12,8 @@ wheels/
 # Benchmark artifacts
 datasets/
 results/
+!docs/data/results/
+!docs/data/results/*.csv
 
 # Local run config (with secrets)
 benchmark.local.yml
