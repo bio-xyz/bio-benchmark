@@ -1,13 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bio Benchmark Results</title>
+    <title>PhyloBioBixBench-Verified-50 | Bio Benchmark Results</title>
     <meta
       name="description"
-      content="Interactive visualization for three PhyloBioBixBench-Verified-50 benchmark result runs."
+      content="Interactive dashboard for PhyloBioBixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
     />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="PhyloBioBixBench-Verified-50 | Bio Benchmark"
+    />
+    <meta
+      property="og:description"
+      content="Interactive dashboard for PhyloBioBixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
+    />
+    <meta
+      property="og:url"
+      content="https://bio-xyz.github.io/bio-benchmark/"
+    />
+    <meta property="og:site_name" content="bio.xyz" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="PhyloBioBixBench-Verified-50 | Bio Benchmark"
+    />
+    <meta
+      name="twitter:description"
+      content="Interactive dashboard for PhyloBioBixBench-Verified-50 benchmark results — direct, MCQ, and refusal-aware grading across 50 biology questions."
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,16 +54,20 @@
     <main class="page">
       <!-- 1. Hero -->
       <header class="hero">
-        <p class="eyebrow">GitHub Pages Report</p>
-        <h1>PhyloBioBixBench-Verified-50</h1>
-        <p class="subtitle">
-          Visual summary of the 3 source CSV runs listed in
-          <code>results/saved_output.md</code>.
+        <p class="eyebrow">
+          <a href="https://ai.bio.xyz/" class="eyebrow-link">ai.bio.xyz</a>
         </p>
+        <h1>PhyloBioBixBench-Verified-50</h1>
         <div class="hero-meta">
           <span id="generated-at">Loading data...</span>
           <span id="totals-badge"></span>
         </div>
+        <nav class="hero-links">
+          <a href="https://ai.bio.xyz/" class="hero-link">ai.bio.xyz</a>
+          <a href="https://github.com/bio-xyz/bio-benchmark" class="hero-link"
+            >GitHub</a
+          >
+        </nav>
       </header>
 
       <!-- 2. Grading Modes Explainer -->
@@ -42,7 +77,11 @@
       </section>
 
       <!-- 3. Headline Metric Cards (9 cards) -->
-      <section id="headline-cards" class="cards" aria-label="Headline metrics"></section>
+      <section
+        id="headline-cards"
+        class="cards"
+        aria-label="Headline metrics"
+      ></section>
 
       <!-- 4. Key Takeaways -->
       <section class="insight-panel" id="takeaways-section">
@@ -76,7 +115,8 @@
       <section class="panel">
         <h2>Existing Performance Figure</h2>
         <p class="panel-intro">
-          Included from <code>results/performance_analysis.png</code> as requested.
+          Included from <code>results/performance_analysis.png</code> as
+          requested.
         </p>
         <img
           src="assets/performance_analysis.png"
@@ -204,7 +244,10 @@
       <!-- 12. Cross-Run Variability -->
       <section class="panel" id="variability-section">
         <h2>Cross-Run Variability</h2>
-        <p class="panel-intro">Mixed-result questions broken down by file code (MCQ without refusal correct/total).</p>
+        <p class="panel-intro">
+          Mixed-result questions broken down by file code (MCQ without refusal
+          correct/total).
+        </p>
         <div class="table-scroll">
           <table id="variability-table">
             <thead id="variability-table-head"></thead>
@@ -240,7 +283,8 @@
       <section class="panel">
         <h2>Rebuild Data</h2>
         <p class="panel-intro">
-          Run <code>python3 scripts/build_pages_data.py</code> whenever source CSVs or image change.
+          Run <code>python3 scripts/build_pages_data.py</code> whenever source
+          CSVs or image change.
         </p>
       </section>
     </main>

@@ -100,6 +100,17 @@ h1 {
   color: var(--text-secondary);
 }
 
+.eyebrow-link {
+  color: var(--accent-green);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 140ms ease;
+}
+
+.eyebrow-link:hover {
+  border-bottom-color: var(--accent-green);
+}
+
 .hero-meta {
   margin-top: 16px;
   display: flex;
@@ -107,6 +118,31 @@ h1 {
   gap: 12px;
   color: var(--text-muted);
   font: 500 12px/1.4 "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+}
+
+.hero-links {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text-secondary);
+  font: 500 13px/1.4 "Inter", sans-serif;
+  text-decoration: none;
+  transition: border-color 140ms ease, color 140ms ease;
+}
+
+.hero-link:hover {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
 }
 
 code {
