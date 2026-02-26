@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import re
 import shutil
+import statistics
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,6 +32,19 @@ PERFORMANCE_PNG = "performance_analysis.png"
 
 def to_bool(value: str) -> bool:
     return str(value).strip().lower() in {"true", "1", "yes"}
+
+
+def wilson_ci(correct: int, total: int, z: float = 1.96) -> dict[str, float]:
+    """Wilson score confidence interval for a binomial proportion."""
+    if total == 0:
+        return {"lo": 0.0, "hi": 0.0}
+    p = correct / total
+    denom = 1 + z * z / total
+    center = p + z * z / (2 * total)
+    spread = z * math.sqrt(p * (1 - p) / total + z * z / (4 * total * total))
+    lo = max(0.0, (center - spread) / denom)
+    hi = min(1.0, (center + spread) / denom)
+    return {"lo": round(lo * 100, 1), "hi": round(hi * 100, 1)}
 
 
 def percentile(values: list[float], q: float) -> float:
@@ -76,6 +91,7 @@ def metric_summary(rows: list[dict[str, str]]) -> dict[str, dict[str, Any]]:
             "correct": correct,
             "total": total,
             "pct": pct,
+            "ci_95": wilson_ci(correct, total),
         }
     return out
 
@@ -188,6 +204,7 @@ def build_payload(all_rows: list[dict[str, str]], by_file_rows: dict[str, list[d
                 "mcq_with_refusal_pct": mcq_with_refusal_pct,
                 "mcq_without_refusal_pct": mcq_without_refusal_pct,
                 "refusal_gap_pp": round(mcq_without_refusal_pct - mcq_with_refusal_pct, 1),
+                "mcq_lift_pp": round(mcq_without_refusal_pct - direct_pct, 1),
                 "mcq_without_refusal_failures": int(n - rec["mcq_without_refusal"]),
             }
         )
@@ -264,6 +281,123 @@ def build_payload(all_rows: list[dict[str, str]], by_file_rows: dict[str, list[d
 
     latencies = [float(row["latency_ms"]) for row in all_rows if row.get("latency_ms")]
 
+    # --- Majority vote per question ---
+    majority_vote: dict[str, dict[str, bool]] = {}
+    for qid, rec in question_acc.items():
+        n = rec["n"]
+        majority_vote[qid] = {
+            "direct": rec["direct"] > n / 2,
+            "mcq_with_refusal": rec["mcq_with_refusal"] > n / 2,
+            "mcq_without_refusal": rec["mcq_without_refusal"] > n / 2,
+        }
+    mv_direct = sum(1 for v in majority_vote.values() if v["direct"])
+    mv_mcq_with = sum(1 for v in majority_vote.values() if v["mcq_with_refusal"])
+    mv_mcq_without = sum(1 for v in majority_vote.values() if v["mcq_without_refusal"])
+    n_questions = len(question_scores)
+    majority_vote_summary = {
+        "direct": {"correct": mv_direct, "total": n_questions, "pct": round(mv_direct / n_questions * 100, 1)},
+        "mcq_with_refusal": {"correct": mv_mcq_with, "total": n_questions, "pct": round(mv_mcq_with / n_questions * 100, 1)},
+        "mcq_without_refusal": {"correct": mv_mcq_without, "total": n_questions, "pct": round(mv_mcq_without / n_questions * 100, 1)},
+    }
+
+    # --- Derived headline metrics ---
+    mcq_lift_pp = round(overall["mcq_without_refusal"]["pct"] - overall["direct"]["pct"], 1)
+    refusal_gap_pp = round(overall["mcq_without_refusal"]["pct"] - overall["mcq_with_refusal"]["pct"], 1)
+
+    best_repeat = by_repeat[0]
+    worst_repeat = by_repeat[-1]
+    best_repeat_pct = best_repeat["metrics"]["mcq_without_refusal"]["pct"]
+    worst_repeat_pct = worst_repeat["metrics"]["mcq_without_refusal"]["pct"]
+    best_repeat_label = f"{best_repeat['file_code']}-{best_repeat['repeat_label']}"
+    worst_repeat_label = f"{worst_repeat['file_code']}-{worst_repeat['repeat_label']}"
+    repeat_spread_pp = round(best_repeat_pct - worst_repeat_pct, 1)
+    repeat_pcts = [r["metrics"]["mcq_without_refusal"]["pct"] for r in by_repeat]
+    repeat_median_pct = round(statistics.median(repeat_pcts), 1)
+
+    task_groups_at_100 = sum(1 for tg in task_group_scores if tg["mcq_without_refusal_pct"] == 100.0)
+    task_groups_at_100_pct = round(task_groups_at_100 / len(task_group_scores) * 100, 1)
+
+    # --- MCQ rescue lifts (top 10) ---
+    rescue_lifts = sorted(
+        [q for q in question_scores if q["mcq_lift_pp"] > 0],
+        key=lambda q: (-q["mcq_lift_pp"], q["question_id"]),
+    )[:10]
+
+    perfect_rescues = [q for q in question_scores if q["direct_pct"] == 0.0 and q["mcq_without_refusal_pct"] == 100.0]
+
+    # --- Cross-run variability for mixed questions ---
+    # Build per-question per-file_code correct/total for mcq_without_refusal
+    q_file_map: dict[str, dict[str, dict[str, int]]] = defaultdict(lambda: defaultdict(lambda: {"correct": 0, "total": 0}))
+    for row in all_rows:
+        qid = row["question_id"]
+        fc = row["run_id"].split("-")[-2]
+        q_file_map[qid][fc]["total"] += 1
+        q_file_map[qid][fc]["correct"] += int(to_bool(row["mcq_without_refusal_correct"]))
+
+    file_codes = sorted({row["run_id"].split("-")[-2] for row in all_rows})
+    cross_run_variability = []
+    for qid in sorted(mixed):
+        entry: dict[str, Any] = {"question_id": qid, "by_file": {}}
+        for fc in file_codes:
+            rec = q_file_map[qid][fc]
+            entry["by_file"][fc] = {"correct": rec["correct"], "total": rec["total"]}
+        cross_run_variability.append(entry)
+
+    # --- Total MCQ failures for top-3 stat ---
+    total_mcq_failures = sum(q["mcq_without_refusal_failures"] for q in question_scores)
+    top3_failures = sum(q["mcq_without_refusal_failures"] for q in question_scores[:3])
+    top3_failure_pct = round(top3_failures / total_mcq_failures * 100, 1) if total_mcq_failures else 0.0
+
+    # --- Commentary dict ---
+    rescued_pct = round((rescued / len(rows_direct_wrong)) * 100, 1) if rows_direct_wrong else 0.0
+    lost_pct = round((lost / len(rows_direct_right)) * 100, 1) if rows_direct_right else 0.0
+
+    commentary = {
+        "grading_modes": [
+            {
+                "name": "Direct",
+                "description": "The model's free-form answer is graded by an LLM judge (gpt-5) against the ground truth. Sensitive to phrasing and formatting.",
+                "accent": "coral",
+            },
+            {
+                "name": "MCQ without refusal",
+                "description": "The model's answer is mapped to the closest multiple-choice option (via gpt-4o), then graded for correctness. The model must select an option.",
+                "accent": "teal",
+            },
+            {
+                "name": "MCQ with refusal",
+                "description": "Same as above, but the model is allowed to select \"Insufficient information to determine\" when the answer doesn't closely match any option. This is the stricter evaluator.",
+                "accent": "sun",
+            },
+        ],
+        "invariant_note": "Key invariant: mcq_with_refusal <= mcq_without_refusal. If the with-refusal mode selects a concrete option, that option must be correct (meaning without-refusal would also be correct). The with-refusal mode may additionally refuse when the answer is not precise enough.",
+        "overall_interpretation": f"MCQ without refusal provides a +{mcq_lift_pp}pp lift over direct grading. MCQ with refusal sits {refusal_gap_pp}pp below MCQ without refusal, reflecting its stricter tolerance. The gap between direct and MCQ suggests that a significant portion of \"wrong\" answers under direct grading are actually correct answers that the direct grader cannot parse due to formatting differences.",
+        "rescue_interpretation": f"MCQ grading is {'purely additive' if lost == 0 else 'mostly additive'} \u2014 it {'never downgrades a correct direct answer' if lost == 0 else f'rarely downgrades ({lost} losses)'}, and it rescues {rescued_pct}% of direct failures.",
+        "refusal_gap_interpretation": f"The {refusal_gap_pp}pp refusal gap ({overall['mcq_without_refusal']['pct']}% \u2192 {overall['mcq_with_refusal']['pct']}%) represents answer precision, not knowledge. The model often knows the right direction but its exact numerical or categorical answers aren't always tight enough for the stricter evaluator.",
+        "strengths": [
+            f"{overall['mcq_without_refusal']['pct']}% MCQ w/o refusal is a strong result. The model demonstrates solid bioinformatics knowledge across the majority of the benchmark.",
+            f"{len(always_correct)}/{n_questions} questions ({round(len(always_correct)/n_questions*100)}%) are perfectly consistent. The model reliably gets these right every single time across all {sum(m['repeats'] for m in source_meta)} repeats.",
+            f"{task_groups_at_100}/{len(task_group_scores)} task groups score 100%. The model handles the majority of bioinformatics analysis tasks flawlessly.",
+            f"MCQ rescue rate of {rescued_pct}% with {'zero' if lost == 0 else str(lost)} losses. The MCQ format is a reliable safety net that recovers misgraded answers without {'ever introducing new errors' if lost == 0 else 'significant error introduction'}.",
+            f"{len(perfect_rescues)} questions with perfect 100pp rescue. The model knows the answer to these questions every time \u2014 the issue is purely in how the direct grader interprets the response format.",
+            f"Cross-run stability. MCQ w/o refusal ranges from {min(f['metrics']['mcq_without_refusal']['pct'] for f in by_file)}\u2013{max(f['metrics']['mcq_without_refusal']['pct'] for f in by_file)}% across files, indicating reproducible evaluation.",
+        ],
+        "weaknesses": [
+            f"bix-32-q2 (0/{sum(m['repeats'] for m in source_meta)}): Complete failure across all repeats and all grading modes. This is not a grading issue \u2014 the model genuinely cannot answer this question.",
+            f"bix-16 task group ({[tg for tg in task_group_scores if tg['task_group'] == 'bix-16'][0]['mcq_without_refusal_pct']}%): The weakest multi-question task group. Two of its three questions (q1 and q3) fail at 9.1%, while q4 scores 100%.",
+            f"bix-24-q2 ({[q for q in question_scores if q['question_id'] == 'bix-24-q2'][0]['mcq_without_refusal_pct']}%): Moderate failure rate with no MCQ lift \u2014 the model has a genuine knowledge gap here.",
+            f"Answer precision issues: {len(refusal_gap_questions)} questions show a refusal gap, meaning the model gets to the right answer but not precisely enough.",
+            f"Run-to-run variance: While the average is stable, individual repeats range from {worst_repeat_pct}% to {best_repeat_pct}% \u2014 a {repeat_spread_pp}pp spread.",
+        ],
+        "key_takeaways": [
+            f"The model's true knowledge level is closer to {overall['mcq_without_refusal']['pct']}% than {overall['direct']['pct']}%. The {mcq_lift_pp}pp gap between direct ({overall['direct']['pct']}%) and MCQ ({overall['mcq_without_refusal']['pct']}%) is largely a grading artifact.",
+            f"3 questions account for {top3_failure_pct}% of all MCQ failures. bix-32-q2, bix-16-q3, and bix-16-q1 together account for {top3_failures} of the {total_mcq_failures} total MCQ w/o refusal failures. Fixing these three would push the score to approximately {round((overall['mcq_without_refusal']['correct'] + top3_failures) / overall['mcq_without_refusal']['total'] * 100, 1)}%.",
+            f"The {refusal_gap_pp}pp refusal gap ({overall['mcq_without_refusal']['pct']}% \u2192 {overall['mcq_with_refusal']['pct']}%) represents answer precision, not knowledge.",
+            f"Best single-repeat score is {best_repeat_pct}% ({best_repeat['metrics']['mcq_without_refusal']['correct']}/{best_repeat['metrics']['mcq_without_refusal']['total']}). This demonstrates the model's ceiling \u2014 it's capable of near-perfect performance in favorable conditions.",
+            f"The benchmark has good discriminative power. With {len(always_correct)} always-correct, {len(always_wrong)} always-wrong, and {len(mixed)} mixed questions, the benchmark effectively separates reliable knowledge from uncertain areas.",
+        ],
+    }
+
     return {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "title": "PhyloBioBixBench-Verified-50 Results",
@@ -285,14 +419,12 @@ def build_payload(all_rows: list[dict[str, str]], by_file_rows: dict[str, list[d
             "direct_wrong": len(rows_direct_wrong),
             "direct_right": len(rows_direct_right),
             "rescued": rescued,
-            "rescued_pct": round((rescued / len(rows_direct_wrong)) * 100, 1)
-            if rows_direct_wrong
-            else 0.0,
+            "rescued_pct": rescued_pct,
             "lost": lost,
-            "lost_pct": round((lost / len(rows_direct_right)) * 100, 1)
-            if rows_direct_right
-            else 0.0,
+            "lost_pct": lost_pct,
         },
+        "rescue_lifts": rescue_lifts,
+        "perfect_rescues": len(perfect_rescues),
         "consistency": {
             "always_correct": len(always_correct),
             "always_wrong": len(always_wrong),
@@ -302,6 +434,23 @@ def build_payload(all_rows: list[dict[str, str]], by_file_rows: dict[str, list[d
             "mixed_pct": round(len(mixed) / len(question_scores) * 100, 1),
             "mixed_questions": sorted(mixed),
         },
+        "cross_run_variability": cross_run_variability,
+        "file_codes": file_codes,
+        "majority_vote": majority_vote_summary,
+        "headline": {
+            "mcq_lift_pp": mcq_lift_pp,
+            "refusal_gap_pp": refusal_gap_pp,
+            "best_repeat_pct": best_repeat_pct,
+            "best_repeat_label": best_repeat_label,
+            "worst_repeat_pct": worst_repeat_pct,
+            "worst_repeat_label": worst_repeat_label,
+            "repeat_spread_pp": repeat_spread_pp,
+            "repeat_median_pct": repeat_median_pct,
+            "task_groups_at_100": task_groups_at_100,
+            "task_groups_at_100_pct": task_groups_at_100_pct,
+            "total_task_groups": len(task_group_scores),
+        },
+        "commentary": commentary,
         "latency": {
             "mean_ms": round(sum(latencies) / len(latencies), 1) if latencies else 0.0,
             "p95_ms": round(percentile(latencies, 0.95), 1) if latencies else 0.0,

@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -21,6 +21,7 @@
   <body>
     <div class="ambient" aria-hidden="true"></div>
     <main class="page">
+      <!-- 1. Hero -->
       <header class="hero">
         <p class="eyebrow">GitHub Pages Report</p>
         <h1>PhyloBioBixBench-Verified-50</h1>
@@ -34,8 +35,22 @@
         </div>
       </header>
 
+      <!-- 2. Grading Modes Explainer -->
+      <section class="insight-panel" id="grading-modes-section">
+        <h2>Grading Modes</h2>
+        <div id="grading-modes-content"></div>
+      </section>
+
+      <!-- 3. Headline Metric Cards (9 cards) -->
       <section id="headline-cards" class="cards" aria-label="Headline metrics"></section>
 
+      <!-- 4. Key Takeaways -->
+      <section class="insight-panel" id="takeaways-section">
+        <h2>Key Takeaways</h2>
+        <ol id="takeaways-list" class="takeaway-list"></ol>
+      </section>
+
+      <!-- 5. Source Runs + Downloads -->
       <section class="panel source-panel">
         <div>
           <h2>Scoped Source Runs</h2>
@@ -57,6 +72,7 @@
         </div>
       </section>
 
+      <!-- 6. Performance Image -->
       <section class="panel">
         <h2>Existing Performance Figure</h2>
         <p class="panel-intro">
@@ -69,38 +85,141 @@
         />
       </section>
 
+      <!-- 7. Charts Grid (6 existing + 1 new task group chart) -->
       <section class="charts">
         <article class="panel chart-panel">
           <h2>Overall Accuracy</h2>
-          <canvas id="overall-chart"></canvas>
+          <div id="overall-chart-annotation"></div>
+          <div class="chart-frame">
+            <canvas id="overall-chart"></canvas>
+          </div>
         </article>
 
         <article class="panel chart-panel">
           <h2>Per-File Comparison</h2>
-          <canvas id="file-chart"></canvas>
+          <div class="chart-frame">
+            <canvas id="file-chart"></canvas>
+          </div>
         </article>
 
         <article class="panel chart-panel">
           <h2>Repeat Ranking (MCQ without refusal)</h2>
-          <canvas id="repeat-chart"></canvas>
+          <div class="chart-frame">
+            <canvas id="repeat-chart"></canvas>
+          </div>
         </article>
 
         <article class="panel chart-panel">
           <h2>Hardest Questions</h2>
-          <canvas id="hardest-chart"></canvas>
+          <div class="chart-frame">
+            <canvas id="hardest-chart"></canvas>
+          </div>
         </article>
 
         <article class="panel chart-panel">
           <h2>Largest Refusal Gaps</h2>
-          <canvas id="gap-chart"></canvas>
+          <div id="gap-chart-annotation"></div>
+          <div class="chart-frame">
+            <canvas id="gap-chart"></canvas>
+          </div>
         </article>
 
         <article class="panel chart-panel">
           <h2>Consistency Mix</h2>
-          <canvas id="consistency-chart"></canvas>
+          <div class="chart-frame chart-frame-square">
+            <canvas id="consistency-chart"></canvas>
+          </div>
+        </article>
+
+        <article class="panel chart-panel chart-panel-wide">
+          <h2>Task Group Accuracy (32 groups)</h2>
+          <div class="chart-frame chart-frame-wide">
+            <canvas id="taskgroup-chart"></canvas>
+          </div>
         </article>
       </section>
 
+      <!-- 8. Strengths & Weaknesses -->
+      <section class="insight-panel" id="sw-section">
+        <h2>Strengths &amp; Weaknesses</h2>
+        <div class="sw-grid">
+          <div>
+            <h3>Strengths</h3>
+            <ul id="strengths-list" class="insight-list strengths"></ul>
+          </div>
+          <div>
+            <h3>Weaknesses</h3>
+            <ul id="weaknesses-list" class="insight-list weaknesses"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. All 50 Questions Table -->
+      <section class="panel">
+        <h2>All 50 Questions</h2>
+        <div class="table-scroll">
+          <table class="sortable-table" id="question-table">
+            <thead>
+              <tr>
+                <th data-sort="question_id">Question</th>
+                <th data-sort="task_group">Task Group</th>
+                <th data-sort="direct_pct">Direct</th>
+                <th data-sort="mcq_without_refusal_pct">MCQ w/o</th>
+                <th data-sort="mcq_with_refusal_pct">MCQ w/</th>
+                <th data-sort="refusal_gap_pp">Refusal Gap</th>
+                <th data-sort="mcq_lift_pp">MCQ Lift</th>
+              </tr>
+            </thead>
+            <tbody id="question-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 10. All 32 Task Groups Table -->
+      <section class="panel">
+        <h2>All 32 Task Groups</h2>
+        <div class="table-scroll">
+          <table class="sortable-table" id="taskgroup-table">
+            <thead>
+              <tr>
+                <th data-sort="task_group">Task Group</th>
+                <th data-sort="questions">Questions</th>
+                <th data-sort="n">Runs</th>
+                <th data-sort="direct_pct">Direct</th>
+                <th data-sort="mcq_without_refusal_pct">MCQ w/o</th>
+                <th data-sort="mcq_with_refusal_pct">MCQ w/</th>
+              </tr>
+            </thead>
+            <tbody id="taskgroup-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 11. MCQ Rescue Detail -->
+      <section class="panel" id="rescue-detail-section">
+        <h2>MCQ Rescue Detail</h2>
+        <div id="rescue-detail-content"></div>
+      </section>
+
+      <!-- 12. Cross-Run Variability -->
+      <section class="panel" id="variability-section">
+        <h2>Cross-Run Variability</h2>
+        <p class="panel-intro">Mixed-result questions broken down by file code (MCQ without refusal correct/total).</p>
+        <div class="table-scroll">
+          <table id="variability-table">
+            <thead id="variability-table-head"></thead>
+            <tbody id="variability-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 13. Scientific Reporting -->
+      <section class="insight-panel" id="reporting-section">
+        <h2>Scientific Reporting</h2>
+        <div id="reporting-content" class="reporting-grid"></div>
+      </section>
+
+      <!-- 14. Best Repeats Table (all 11) -->
       <section class="panel">
         <h2>Best Repeats</h2>
         <table>
@@ -117,6 +236,7 @@
         </table>
       </section>
 
+      <!-- 15. Rebuild Instructions -->
       <section class="panel">
         <h2>Rebuild Data</h2>
         <p class="panel-intro">

@@ -1,23 +1,31 @@
 const DATA_URL = "data/benchmark_summary.json";
 
 const chartPalette = {
-  amber: "#ffa630",
-  teal: "#27c4a8",
-  coral: "#ff6f61",
-  sun: "#ffd166",
-  blue: "#6fb6ff",
-  mint: "#84dcc6",
-  slate: "#5e8096",
+  amber: "#d4a74a",
+  teal: "#7a9a68",
+  coral: "#d97777",
+  sun: "#98b384",
+  blue: "#7aa2cc",
+  mint: "#b8d5a7",
+  slate: "#94a3b8",
 };
 
 if (window.Chart) {
-  Chart.defaults.color = "#d4e3ed";
-  Chart.defaults.borderColor = "rgba(255, 255, 255, 0.14)";
-  Chart.defaults.font.family = "Sora, sans-serif";
+  Chart.defaults.color = "#52525b";
+  Chart.defaults.borderColor = "#e4e4e7";
+  Chart.defaults.font.family = "Inter, sans-serif";
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
+  Chart.defaults.plugins.legend.labels.boxWidth = 10;
+  Chart.defaults.plugins.legend.labels.boxHeight = 10;
 }
 
 function pct(value) {
   return `${Number(value).toFixed(1)}%`;
+}
+
+function pp(value) {
+  const v = Number(value);
+  return `${v >= 0 ? "+" : ""}${v.toFixed(1)}pp`;
 }
 
 function dateTime(value) {
@@ -34,19 +42,66 @@ function metricCard(title, value, detail) {
   `;
 }
 
+function cellClass(value) {
+  if (value === 0) return "cell-zero";
+  if (value === 100) return "cell-perfect";
+  return "";
+}
+
+function rowClass(pctValue) {
+  if (pctValue === 100) return "row-perfect";
+  if (pctValue < 50) return "row-struggling";
+  return "";
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// --- Header ---
+
 function setHeader(data) {
   document.getElementById("generated-at").textContent = `Generated ${dateTime(
     data.generated_at_utc
   )}`;
   document.getElementById(
     "totals-badge"
-  ).textContent = `${data.totals.rows} rows • ${data.totals.repeats} repeats • ${data.totals.questions} questions`;
+  ).textContent = `${data.totals.rows} rows \u2022 ${data.totals.repeats} repeats \u2022 ${data.totals.questions} questions`;
 }
+
+// --- Grading Modes ---
+
+function renderGradingModes(data) {
+  const modes = data.commentary.grading_modes;
+  const invariant = data.commentary.invariant_note;
+  const container = document.getElementById("grading-modes-content");
+
+  const cards = modes
+    .map(
+      (m) => `
+    <div class="mode-card accent-${m.accent}">
+      <h3>${escapeHtml(m.name)}</h3>
+      <p>${escapeHtml(m.description)}</p>
+    </div>
+  `
+    )
+    .join("");
+
+  container.innerHTML = `
+    <div class="grading-modes-grid">${cards}</div>
+    <p class="invariant-note">${escapeHtml(invariant)}</p>
+  `;
+}
+
+// --- Metric Cards (9) ---
 
 function renderCards(data) {
   const overall = data.overall;
   const rescue = data.rescue;
   const consistency = data.consistency;
+  const h = data.headline;
 
   const cardsMarkup = [
     metricCard(
@@ -65,19 +120,50 @@ function renderCards(data) {
       `${overall.mcq_without_refusal.correct}/${overall.mcq_without_refusal.total}`
     ),
     metricCard(
+      "MCQ Lift",
+      pp(h.mcq_lift_pp),
+      `Direct \u2192 MCQ w/o refusal`
+    ),
+    metricCard(
+      "Refusal Gap",
+      `${h.refusal_gap_pp}pp`,
+      `MCQ w/o \u2192 MCQ w/ refusal`
+    ),
+    metricCard(
       "MCQ rescue rate",
       pct(rescue.rescued_pct),
       `${rescue.rescued}/${rescue.direct_wrong} direct misses rescued`
+    ),
+    metricCard(
+      "Best repeat",
+      pct(h.best_repeat_pct),
+      h.best_repeat_label
     ),
     metricCard(
       "Always-correct questions",
       pct(consistency.always_correct_pct),
       `${consistency.always_correct}/${data.totals.questions} questions`
     ),
+    metricCard(
+      "Task groups at 100%",
+      pct(h.task_groups_at_100_pct),
+      `${h.task_groups_at_100}/${h.total_task_groups} task groups`
+    ),
   ].join("");
 
   document.getElementById("headline-cards").innerHTML = cardsMarkup;
 }
+
+// --- Key Takeaways ---
+
+function renderKeyTakeaways(data) {
+  const list = document.getElementById("takeaways-list");
+  list.innerHTML = data.commentary.key_takeaways
+    .map((t) => `<li>${escapeHtml(t)}</li>`)
+    .join("");
+}
+
+// --- Source Table ---
 
 function renderSourceTable(data) {
   const tableBody = document.getElementById("source-table-body");
@@ -103,8 +189,222 @@ function renderSourceTable(data) {
     .join("");
 }
 
+// --- Strengths & Weaknesses ---
+
+function renderStrengthsWeaknesses(data) {
+  document.getElementById("strengths-list").innerHTML = data.commentary.strengths
+    .map((s) => `<li>${escapeHtml(s)}</li>`)
+    .join("");
+  document.getElementById("weaknesses-list").innerHTML = data.commentary.weaknesses
+    .map((w) => `<li>${escapeHtml(w)}</li>`)
+    .join("");
+}
+
+// --- Sortable Table Helper ---
+
+function makeSortable(tableId, dataArray, renderRowFn) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const headers = table.querySelectorAll("th[data-sort]");
+  let currentSort = null;
+  let ascending = true;
+
+  headers.forEach((th) => {
+    th.addEventListener("click", () => {
+      const key = th.dataset.sort;
+      if (currentSort === key) {
+        ascending = !ascending;
+      } else {
+        currentSort = key;
+        ascending = true;
+      }
+      const sorted = [...dataArray].sort((a, b) => {
+        const va = a[key];
+        const vb = b[key];
+        if (typeof va === "number" && typeof vb === "number") {
+          return ascending ? va - vb : vb - va;
+        }
+        return ascending
+          ? String(va).localeCompare(String(vb))
+          : String(vb).localeCompare(String(va));
+      });
+      const tbody = table.querySelector("tbody");
+      tbody.innerHTML = sorted.map(renderRowFn).join("");
+    });
+  });
+}
+
+// --- All 50 Questions Table ---
+
+function renderQuestionTable(data) {
+  const questions = data.question_scores;
+  const tbody = document.getElementById("question-table-body");
+
+  function renderRow(q) {
+    const rc = rowClass(q.mcq_without_refusal_pct);
+    return `<tr class="${rc}">
+      <td><code>${q.question_id}</code></td>
+      <td>${q.task_group}</td>
+      <td class="${cellClass(q.direct_pct)}">${pct(q.direct_pct)}</td>
+      <td class="${cellClass(q.mcq_without_refusal_pct)}">${pct(q.mcq_without_refusal_pct)}</td>
+      <td class="${cellClass(q.mcq_with_refusal_pct)}">${pct(q.mcq_with_refusal_pct)}</td>
+      <td>${q.refusal_gap_pp}pp</td>
+      <td>${pp(q.mcq_lift_pp)}</td>
+    </tr>`;
+  }
+
+  tbody.innerHTML = questions.map(renderRow).join("");
+  makeSortable("question-table", questions, renderRow);
+}
+
+// --- All 32 Task Groups Table ---
+
+function renderTaskGroupTable(data) {
+  const groups = data.task_group_scores;
+  const tbody = document.getElementById("taskgroup-table-body");
+
+  function renderRow(g) {
+    const rc = rowClass(g.mcq_without_refusal_pct);
+    return `<tr class="${rc}">
+      <td>${g.task_group}</td>
+      <td>${g.questions}</td>
+      <td>${g.n}</td>
+      <td class="${cellClass(g.direct_pct)}">${pct(g.direct_pct)}</td>
+      <td class="${cellClass(g.mcq_without_refusal_pct)}">${pct(g.mcq_without_refusal_pct)}</td>
+      <td class="${cellClass(g.mcq_with_refusal_pct)}">${pct(g.mcq_with_refusal_pct)}</td>
+    </tr>`;
+  }
+
+  tbody.innerHTML = groups.map(renderRow).join("");
+  makeSortable("taskgroup-table", groups, renderRow);
+}
+
+// --- MCQ Rescue Detail ---
+
+function renderRescueDetail(data) {
+  const rescue = data.rescue;
+  const lifts = data.rescue_lifts;
+  const commentary = data.commentary.rescue_interpretation;
+  const container = document.getElementById("rescue-detail-content");
+
+  const statCards = `
+    <div class="rescue-grid">
+      <div class="rescue-stat">
+        <p>Rescued</p>
+        <div class="lift-value">${rescue.rescued}</div>
+        <p>${pct(rescue.rescued_pct)} of ${rescue.direct_wrong} direct misses</p>
+      </div>
+      <div class="rescue-stat">
+        <p>Lost</p>
+        <div class="lift-value" style="color: var(--accent-coral)">${rescue.lost}</div>
+        <p>${pct(rescue.lost_pct)} of ${rescue.direct_right} direct correct</p>
+      </div>
+      <div class="rescue-stat">
+        <p>Perfect rescues</p>
+        <div class="lift-value">${data.perfect_rescues}</div>
+        <p>0% direct \u2192 100% MCQ</p>
+      </div>
+    </div>
+  `;
+
+  const liftsTable = lifts.length
+    ? `<h3>Biggest MCQ Lifts (Direct \u2192 MCQ w/o Refusal)</h3>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Question</th><th>Direct</th><th>MCQ w/o</th><th>Lift</th></tr></thead>
+      <tbody>${lifts
+        .map(
+          (q) =>
+            `<tr><td><code>${q.question_id}</code></td><td>${pct(q.direct_pct)}</td><td>${pct(q.mcq_without_refusal_pct)}</td><td>${pp(q.mcq_lift_pp)}</td></tr>`
+        )
+        .join("")}</tbody>
+    </table></div>`
+    : "";
+
+  container.innerHTML = `
+    <p class="panel-intro">${escapeHtml(commentary)}</p>
+    ${statCards}
+    ${liftsTable}
+  `;
+}
+
+// --- Cross-Run Variability ---
+
+function renderCrossRunVariability(data) {
+  const rows = data.cross_run_variability;
+  const fileCodes = data.file_codes;
+  if (!rows || !rows.length) return;
+
+  const thead = document.getElementById("variability-table-head");
+  thead.innerHTML = `<tr><th>Question</th>${fileCodes.map((fc) => `<th>${fc}</th>`).join("")}</tr>`;
+
+  const tbody = document.getElementById("variability-table-body");
+  tbody.innerHTML = rows
+    .map((r) => {
+      const cells = fileCodes
+        .map((fc) => {
+          const d = r.by_file[fc];
+          const cls = d.correct === 0 ? "cell-zero" : d.correct === d.total ? "cell-perfect" : "";
+          return `<td class="${cls}">${d.correct}/${d.total}</td>`;
+        })
+        .join("");
+      return `<tr><td><code>${r.question_id}</code></td>${cells}</tr>`;
+    })
+    .join("");
+}
+
+// --- Scientific Reporting ---
+
+function renderScientificReporting(data) {
+  const overall = data.overall;
+  const mv = data.majority_vote;
+  const container = document.getElementById("reporting-content");
+
+  const metrics = ["direct", "mcq_with_refusal", "mcq_without_refusal"];
+  const labels = { direct: "Direct", mcq_with_refusal: "MCQ w/ refusal", mcq_without_refusal: "MCQ w/o refusal" };
+
+  const primaryItems = metrics
+    .map((key) => {
+      const m = overall[key];
+      return `<li>${labels[key]}: <strong>${pct(m.pct)}</strong> (95% CI: ${m.ci_95.lo}\u2013${m.ci_95.hi}) &mdash; ${m.correct}/${m.total}</li>`;
+    })
+    .join("");
+
+  const secondaryItems = metrics
+    .map((key) => {
+      const m = mv[key];
+      return `<li>${labels[key]}: <strong>${m.correct}/${m.total}</strong> (${pct(m.pct)})</li>`;
+    })
+    .join("");
+
+  container.innerHTML = `
+    <div>
+      <h3>Primary: Per-Instance + Wilson CI</h3>
+      <ul class="reporting-list">${primaryItems}</ul>
+    </div>
+    <div>
+      <h3>Secondary: Majority Vote (11-run ensemble)</h3>
+      <ul class="reporting-list">${secondaryItems}</ul>
+    </div>
+  `;
+}
+
+// --- Chart Annotations ---
+
+function addChartAnnotations(data) {
+  const overallAnnotation = document.getElementById("overall-chart-annotation");
+  if (overallAnnotation) {
+    overallAnnotation.innerHTML = `<p class="chart-annotation">${escapeHtml(data.commentary.overall_interpretation)}</p>`;
+  }
+  const gapAnnotation = document.getElementById("gap-chart-annotation");
+  if (gapAnnotation) {
+    gapAnnotation.innerHTML = `<p class="chart-annotation">${escapeHtml(data.commentary.refusal_gap_interpretation)}</p>`;
+  }
+}
+
+// --- Best Repeats Table (all 11) ---
+
 function renderRepeatTable(data) {
-  const rows = data.by_repeat.slice(0, 5);
+  const rows = data.by_repeat;
   const tableBody = document.getElementById("repeat-table-body");
   tableBody.innerHTML = rows
     .map(
@@ -120,6 +420,8 @@ function renderRepeatTable(data) {
     )
     .join("");
 }
+
+// --- Charts ---
 
 function newChart(id, config) {
   const element = document.getElementById(id);
@@ -306,7 +608,44 @@ function renderCharts(data) {
       maintainAspectRatio: false,
     },
   });
+
+  // Task group horizontal grouped bar chart
+  const tgData = [...data.task_group_scores].sort(
+    (a, b) => a.mcq_without_refusal_pct - b.mcq_without_refusal_pct
+  );
+  newChart("taskgroup-chart", {
+    type: "bar",
+    data: {
+      labels: tgData.map((g) => g.task_group),
+      datasets: [
+        {
+          label: "Direct",
+          data: tgData.map((g) => g.direct_pct),
+          backgroundColor: chartPalette.coral,
+        },
+        {
+          label: "MCQ without refusal",
+          data: tgData.map((g) => g.mcq_without_refusal_pct),
+          backgroundColor: chartPalette.teal,
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          min: 0,
+          max: 100,
+          ticks: { callback: (value) => `${value}%` },
+        },
+      },
+    },
+  });
 }
+
+// --- Init ---
 
 async function init() {
   const response = await fetch(DATA_URL);
@@ -315,10 +654,19 @@ async function init() {
   }
   const data = await response.json();
   setHeader(data);
+  renderGradingModes(data);
   renderCards(data);
+  renderKeyTakeaways(data);
   renderSourceTable(data);
-  renderRepeatTable(data);
   renderCharts(data);
+  addChartAnnotations(data);
+  renderStrengthsWeaknesses(data);
+  renderQuestionTable(data);
+  renderTaskGroupTable(data);
+  renderRescueDetail(data);
+  renderCrossRunVariability(data);
+  renderScientificReporting(data);
+  renderRepeatTable(data);
 }
 
 init().catch((error) => {
