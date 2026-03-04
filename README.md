@@ -5,6 +5,7 @@
 [![BixBench-Verified-50](https://img.shields.io/badge/benchmark-BixBench--Verified--50-green.svg)](https://huggingface.co/datasets/phylobio/BixBench-Verified-50)
 [![BioAgents](https://img.shields.io/badge/backend-BioAgents-purple.svg)](https://github.com/bio-xyz/BioAgents)
 [![Get API Key](https://img.shields.io/badge/API%20Key-chat.bio.xyz-teal.svg)](https://chat.bio.xyz/chat?settings=account&section=api-keys)
+[![Results](https://img.shields.io/badge/Results-GitHub%20Pages-brightgreen.svg)](https://bio-xyz.github.io/bio-benchmark/)
 
 BixBench evaluation harness for [BioAgents](https://github.com/bio-xyz/BioAgents) and its closed-source literature and data-analysis agents.
 
